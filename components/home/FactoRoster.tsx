@@ -74,13 +74,13 @@ export const FactoRoster: React.FC = () => {
                 </span>
 
                 <p className="text-xs text-[#0d0e11]/70 leading-relaxed">
-                  {comp.lore}
+                  {comp.description}
                 </p>
               </div>
 
               <div className="pt-6 mt-6 border-t border-[#0d0e11]/10 flex items-center justify-between font-mono text-xs">
-                <span className="text-[#0d0e11]/50">Base Ability</span>
-                <span className="font-semibold text-[#0d0e11]">{comp.special}</span>
+                <span className="text-[#0d0e11]/50">Prime Stat</span>
+                <span className="font-semibold text-[#0d0e11]">{comp.primeStat}</span>
               </div>
             </div>
           ))}
