@@ -41,6 +41,7 @@ export interface Companion {
   ownerHandle: string;
   ownerAddress?: string;
   avatarIcon: string;
+  image?: string;
   badge: string;
   rarity: "Common" | "Rare" | "Epic" | "Legendary";
 }

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Sparkles, Shield, Zap, Heart, Swords, Apple, CheckCircle2, ChevronRight, Terminal, RefreshCw } from "lucide-react";
 import { sounds } from "@/lib/audio";
 import { HatchGuideModal } from "@/components/ui/HatchGuideModal";
@@ -142,12 +143,18 @@ export const FactoHero: React.FC = () => {
                 {/* Overhead Holographic Emitter Light */}
                 <div className="absolute top-0 w-28 h-1 bg-gradient-to-r from-transparent via-[#58e78f] to-transparent shadow-[0_0_15px_#58e78f]"></div>
 
-                {/* Pixel Character Avatar */}
-                <div className="w-32 h-32 rounded-2xl bg-gradient-to-b from-white/10 to-transparent flex items-center justify-center text-6xl shadow-inner mb-2 border border-white/10 select-none">
-                  🦊
+                {/* Character Avatar Image */}
+                <div className="relative w-28 h-28 rounded-2xl overflow-hidden border border-white/20 shadow-2xl mb-2 group">
+                  <Image
+                    src="/companions/robin-fox.jpg"
+                    alt="Robin Fox Avatar"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    priority
+                  />
                 </div>
 
-                <h3 className="font-display font-bold text-xl text-white mt-2">
+                <h3 className="font-display font-bold text-xl text-white mt-1">
                   Robin Fox
                 </h3>
                 <span className="text-xs text-white/50 font-mono">
@@ -155,7 +162,7 @@ export const FactoHero: React.FC = () => {
                 </span>
 
                 {/* Pedestal */}
-                <div className="w-28 h-2 rounded-full bg-gradient-to-r from-transparent via-[#58e78f]/50 to-transparent mt-3"></div>
+                <div className="w-28 h-2 rounded-full bg-gradient-to-r from-transparent via-[#58e78f]/50 to-transparent mt-2"></div>
               </div>
 
               {/* Progress & Stat Matrix */}

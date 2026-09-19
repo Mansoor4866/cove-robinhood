@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { CANONICAL_ROSTER, MOCK_LEADERBOARD } from "@/data/companions";
 import { Trophy, ArrowRight, Shield, Zap, Sparkles, Swords, Compass, Lock, Star } from "lucide-react";
 import { sounds } from "@/lib/audio";
@@ -236,13 +237,24 @@ export const FactoRoster: React.FC = () => {
                     {/* Glowing Platform */}
                     <div className="absolute bottom-2 w-24 h-2 rounded-full bg-gradient-to-r from-transparent via-[#0d0e11]/20 to-transparent"></div>
 
-                    {/* Character Avatar */}
-                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shadow-sm z-10 select-none bg-white border border-[#0d0e11]/5">
-                      {comp.avatarIcon}
+                    {/* Character Avatar Artwork */}
+                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden shadow-md z-10 select-none bg-white border border-[#0d0e11]/10">
+                      {comp.image ? (
+                        <Image
+                          src={comp.image}
+                          alt={comp.name}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-4xl">
+                          {comp.avatarIcon}
+                        </div>
+                      )}
                     </div>
 
                     {/* Power Rating Pill */}
-                    <div className="absolute top-2.5 right-2.5 bg-[#0d0e11] text-white text-[10px] font-mono font-bold px-2 py-0.5 rounded-md flex items-center gap-1 shadow-sm">
+                    <div className="absolute top-2.5 right-2.5 bg-[#0d0e11] text-white text-[10px] font-mono font-bold px-2 py-0.5 rounded-md flex items-center gap-1 shadow-sm z-20">
                       <Zap className="w-2.5 h-2.5 text-[#58e78f]" />
                       <span>PWR {theme.power}</span>
                     </div>

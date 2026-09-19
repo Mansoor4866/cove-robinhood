@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { CANONICAL_ROSTER, MOCK_LEADERBOARD } from "@/data/companions";
 import { Trophy, Search, Sparkles, Shield, ArrowRight } from "lucide-react";
 
@@ -100,8 +101,19 @@ export default function LeaderboardPage() {
                 {rankMeta.badge}
               </div>
 
-              <div className="text-5xl my-4 transform hover:scale-105 transition duration-200">
-                {champion.avatarIcon}
+              <div className="relative w-20 h-20 rounded-2xl overflow-hidden shadow-md my-4 border border-[#0d0e11]/10">
+                {champion.image ? (
+                  <Image
+                    src={champion.image}
+                    alt={champion.name}
+                    fill
+                    className="object-cover hover:scale-105 transition-transform duration-200"
+                  />
+                ) : (
+                  <span className="text-4xl flex items-center justify-center w-full h-full">
+                    {champion.avatarIcon}
+                  </span>
+                )}
               </div>
 
               <h3 className="font-display font-bold text-2xl text-[#0d0e11]">
@@ -152,9 +164,20 @@ export default function LeaderboardPage() {
                   </td>
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl p-1.5 rounded-xl bg-[#f4f4f4] border border-[#0d0e11]/5">
-                        {entry.avatarIcon}
-                      </span>
+                      <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-[#0d0e11]/10 shrink-0">
+                        {entry.image ? (
+                          <Image
+                            src={entry.image}
+                            alt={entry.name}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <span className="text-2xl flex items-center justify-center w-full h-full bg-[#f4f4f4]">
+                            {entry.avatarIcon}
+                          </span>
+                        )}
+                      </div>
                       <div>
                         <span className="font-display font-bold text-[#0d0e11]">
                           {entry.name}
