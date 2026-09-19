@@ -29,7 +29,7 @@ export const CardShowcase: React.FC = () => {
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {displayCompanions.map((c, idx) => (
           <div
-            key={c.id || idx}
+            key={c.name || idx}
             className="glass-panel glass-panel-hover rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden group border border-[#00FF87]/15"
           >
             {/* Top Ribbon */}
