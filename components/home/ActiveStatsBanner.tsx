@@ -1,68 +1,50 @@
 import React from "react";
+import { Activity, Zap, Users, Trophy, Flame } from "lucide-react";
 
 export const ActiveStatsBanner: React.FC = () => {
+  const stats = [
+    { label: "Active Guardians", value: "3,412", delta: "+18% today", icon: <Users className="w-4 h-4 text-[#00FF87]" /> },
+    { label: "Total Forest EXP", value: "1.42M", delta: "On-Chain", icon: <Zap className="w-4 h-4 text-amber-400" /> },
+    { label: "Reward Pool", value: "10,000 $COVE", delta: "Active Epoch", icon: <Trophy className="w-4 h-4 text-[#00FF87]" /> },
+    { label: "Daily Interactions", value: "48.6K", delta: "𝕏 Mentions", icon: <Flame className="w-4 h-4 text-emerald-400" /> },
+  ];
+
   return (
-    <div className="max-w-6xl mx-auto px-6 my-12">
-      <div className="bg-[#0E1402] border border-black/10 rounded-3xl p-6 sm:p-8 shadow-xl">
-        {/* Header */}
-        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#CCFF00] font-bold mb-6">
-          <span>🌲</span>
-          <span>SHERWOOD FOREST ACTIVE STATS</span>
+    <section className="max-w-7xl mx-auto px-6 py-6">
+      <div className="glass-panel border border-[#00FF87]/20 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+        {/* Top Header */}
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#00FF87]/15">
+          <div className="flex items-center gap-2.5">
+            <span className="beacon-dot"></span>
+            <h3 className="font-display font-bold text-base text-white tracking-wide">
+              SHERWOOD FOREST LIVE TELEMETRY
+            </h3>
+          </div>
+          <span className="font-mono text-xs text-[#00FF87] bg-[#00FF87]/10 px-3 py-1 rounded-full border border-[#00FF87]/25">
+            ROBINHOOD EVM SYNCHRONIZED
+          </span>
         </div>
 
-        {/* 5 Stats Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 font-mono">
-          {/* 1. Forest Population */}
-          <div className="bg-[#1A2207] border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
-            <span className="text-[10px] uppercase tracking-wider text-white/40">
-              FOREST POPULATION
-            </span>
-            <span className="text-3xl lg:text-4xl font-bold text-white mt-4">
-              0
-            </span>
-          </div>
-
-          {/* 2. Hatched Today */}
-          <div className="bg-[#1A2207] border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
-            <span className="text-[10px] uppercase tracking-wider text-white/40">
-              HATCHED TODAY
-            </span>
-            <span className="text-3xl lg:text-4xl font-bold text-white mt-4">
-              0
-            </span>
-          </div>
-
-          {/* 3. Adventures Today */}
-          <div className="bg-[#1A2207] border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
-            <span className="text-[10px] uppercase tracking-wider text-white/40">
-              ADVENTURES TODAY
-            </span>
-            <span className="text-3xl lg:text-4xl font-bold text-white mt-4">
-              0
-            </span>
-          </div>
-
-          {/* 4. Lost Today */}
-          <div className="bg-[#1A2207] border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
-            <span className="text-[10px] uppercase tracking-wider text-white/40">
-              LOST TODAY
-            </span>
-            <span className="text-3xl lg:text-4xl font-bold text-white mt-4">
-              0
-            </span>
-          </div>
-
-          {/* 5. Famished Right Now (Highlighted) */}
-          <div className="bg-[#7A9A00] border border-[#CCFF00]/40 rounded-2xl p-5 flex flex-col justify-between text-black col-span-2 sm:col-span-1 shadow-lg">
-            <span className="text-[10px] uppercase tracking-wider text-black/70 font-bold flex items-center gap-1">
-              <span>⚠️</span> FAMISHED RIGHT NOW
-            </span>
-            <span className="text-3xl lg:text-4xl font-bold text-black mt-4">
-              0
-            </span>
-          </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
+          {stats.map((s, idx) => (
+            <div key={idx} className="bg-[#050B07]/60 p-4 rounded-2xl border border-white/5 hover:border-[#00FF87]/30 transition group">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-white/50 text-xs">{s.label}</span>
+                <div className="p-2 rounded-xl bg-white/5 group-hover:bg-[#00FF87]/10 transition">
+                  {s.icon}
+                </div>
+              </div>
+              <div className="text-2xl font-bold font-display text-white group-hover:text-[#00FF87] transition">
+                {s.value}
+              </div>
+              <div className="text-[10px] text-[#00FF87] mt-1 font-semibold">
+                {s.delta}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };

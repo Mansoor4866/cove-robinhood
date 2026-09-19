@@ -10,29 +10,29 @@ import { TerminalLog } from "@/components/home/TerminalLog";
 import { CTASection } from "@/components/home/CTASection";
 
 export default function HomePage() {
-  const [activeUser, setActiveUser] = useState("@mock_user");
+  const [activeUser, setActiveUser] = useState("");
 
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-6 pt-20 pb-16 grid md:grid-cols-2 gap-12 items-start">
+      <section className="max-w-7xl mx-auto px-6 pt-16 pb-12 grid lg:grid-cols-2 gap-12 items-center">
         <HeroSection onSearchUser={(username) => setActiveUser(username)} />
         <CompanionPreview username={activeUser} />
       </section>
 
-      {/* Sherwood Forest Active Stats Banner */}
+      {/* Sherwood Forest Active Telemetry Banner */}
       <ActiveStatsBanner />
 
-      {/* 001 · The desk */}
+      {/* 001 · The Sanctuary Matrix (Bento Grid) */}
       <FeatureDesk />
 
-      {/* 002 · Cards */}
-      <CardShowcase />
-
-      {/* 003 · From the timeline */}
+      {/* 002 · Timeline Log & Interactive CLI */}
       <TerminalLog />
 
-      {/* Bottom CTA Banner */}
+      {/* 003 · Sovereign Companion Roster */}
+      <CardShowcase />
+
+      {/* 004 · Bottom Portal CTA Banner */}
       <CTASection />
     </div>
   );

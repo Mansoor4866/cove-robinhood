@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Check, ArrowRight, RefreshCw, Wallet } from "lucide-react";
+import { X, Check, ArrowRight, RefreshCw, Wallet, Sparkles } from "lucide-react";
 import { authenticateWithWallet, formatAddress } from "@/lib/web3";
 
 interface HatchGuideModalProps {
@@ -109,13 +109,13 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in font-sans">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in font-sans">
       {/* Fixed Dimension Modal Container */}
-      <div className="bg-white border border-black/10 rounded-2xl w-full max-w-[440px] min-h-[430px] p-8 shadow-2xl relative text-center flex flex-col justify-between overflow-hidden">
+      <div className="bg-[#0A140E] border border-[#00FF87]/30 rounded-3xl w-full max-w-[440px] min-h-[430px] p-8 shadow-[0_0_50px_rgba(0,255,135,0.15)] relative text-center flex flex-col justify-between overflow-hidden">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1 text-black/30 hover:text-black transition z-10"
+          className="absolute top-4 right-4 p-1 text-white/40 hover:text-white transition z-10"
           aria-label="Close"
         >
           <X className="w-5 h-5" />
@@ -126,13 +126,13 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
           {/* Step 0: Welcome Slide */}
           {currentStep === 0 && (
             <div className="space-y-3 animate-fade-in">
-              <div className="text-5xl select-none mb-2">🥚</div>
-              <h3 className="font-display font-bold text-2xl text-black">
-                Hey Cove! 👋
+              <div className="text-5xl select-none mb-2 drop-shadow-[0_0_15px_#00FF87]">🥚</div>
+              <h3 className="font-display font-extrabold text-2xl text-white">
+                Welcome to Cove! 👋
               </h3>
-              <p className="text-black/60 text-sm max-w-xs mx-auto leading-relaxed">
-                Wanna hatch some eggs to join the empire?<br />
-                Take a little tour around X and let&apos;s start.
+              <p className="text-white/60 text-sm max-w-xs mx-auto leading-relaxed">
+                Ready to hatch your sovereign AI companion on Robinhood Chain?<br />
+                Take a quick tour and start your journey.
               </p>
             </div>
           )}
@@ -140,13 +140,13 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
           {/* Step 1: Go to 𝕏 */}
           {currentStep === 1 && (
             <div className="space-y-3 animate-fade-in">
-              <div className="text-5xl select-none mb-2">🐣</div>
-              <h3 className="font-display font-bold text-2xl text-black">
-                Step 1: Go to 𝕏
+              <div className="text-5xl select-none mb-2 drop-shadow-[0_0_15px_#00FF87]">🐣</div>
+              <h3 className="font-display font-extrabold text-2xl text-white">
+                Step 1: Go to 𝕏 Timeline
               </h3>
-              <p className="text-black/60 text-sm max-w-xs mx-auto leading-relaxed">
-                Click continue at the end of this guide to open our official Twitter profile{" "}
-                <span className="font-bold text-[#4C6B00]">@Covepets</span>.
+              <p className="text-white/60 text-sm max-w-xs mx-auto leading-relaxed">
+                Click continue at the end of this guide to open our official protocol profile{" "}
+                <span className="font-bold text-[#00FF87]">@Covepets</span>.
               </p>
             </div>
           )}
@@ -154,30 +154,30 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
           {/* Step 2: Crack Your Egg */}
           {currentStep === 2 && (
             <div className="space-y-3 animate-fade-in">
-              <div className="text-5xl select-none mb-2">⚡</div>
-              <h3 className="font-display font-bold text-2xl text-black">
+              <div className="text-5xl select-none mb-2 drop-shadow-[0_0_15px_#00FF87]">⚡</div>
+              <h3 className="font-display font-extrabold text-2xl text-white">
                 Step 2: Crack Your Egg
               </h3>
-              <p className="text-black/60 text-sm max-w-xs mx-auto leading-relaxed">
+              <p className="text-white/60 text-sm max-w-xs mx-auto leading-relaxed">
                 Every time you tag{" "}
-                <span className="font-bold text-[#4C6B00]">@Covepets</span> on X, your egg
-                cracks and your Cove starts growing!
+                <span className="font-bold text-[#00FF87]">@Covepets</span> on X, your egg
+                cracks and your Cove companion begins to evolve!
               </p>
             </div>
           )}
 
           {/* Step 3: Feed & Care */}
           {currentStep === 3 && (
-            <div className="space-y-2 animate-fade-in">
+            <div className="space-y-2.5 animate-fade-in">
               <div className="text-4xl select-none mb-1">🍎</div>
-              <h3 className="font-display font-bold text-2xl text-black">
-                Step 3: Feed & Care
+              <h3 className="font-display font-extrabold text-2xl text-white">
+                Step 3: Feed & Train
               </h3>
-              <p className="text-black/60 text-xs max-w-xs mx-auto leading-relaxed">
-                Feed or train your Cove on X using natural language! Try replying with:
+              <p className="text-white/60 text-xs max-w-xs mx-auto leading-relaxed">
+                Feed or command your companion on X using natural language! Try tweeting:
               </p>
-              <div className="bg-[#FAFAF7] border border-black/10 rounded-xl py-1.5 px-3 font-mono text-xs text-black/80 max-w-xs mx-auto">
-                &quot;Feed my pet a strawberry&quot;
+              <div className="bg-[#050B07] border border-[#00FF87]/30 rounded-xl py-2 px-3.5 font-mono text-xs text-[#00FF87] max-w-xs mx-auto">
+                &quot;@Covepets feed my pet wild honey berries&quot;
               </div>
             </div>
           )}
@@ -186,22 +186,22 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
           {currentStep === 4 && (
             <div className="space-y-3 animate-fade-in w-full">
               <div className="text-3xl select-none">🏆</div>
-              <h3 className="font-display font-bold text-xl text-black">
+              <h3 className="font-display font-extrabold text-xl text-white">
                 Step 4: Connect & Claim
               </h3>
-              <p className="text-black/60 text-xs max-w-xs mx-auto leading-relaxed">
+              <p className="text-white/60 text-xs max-w-xs mx-auto leading-relaxed">
                 Raise your pet to enter the Top 3 Leaderboard and claim your share of the{" "}
-                <span className="font-bold text-[#4C6B00]">10,000 $COVE</span> reward pool!
+                <span className="font-bold text-[#00FF87]">10,000 $COVE</span> reward pool!
               </p>
-              <div className="font-mono text-[11px] text-[#4C6B00] font-bold">
+              <div className="font-mono text-[11px] text-[#00FF87] font-bold">
                 Time Remaining: {timeLeft}
               </div>
 
-              {/* Mode: Default Choose (Connect 𝕏 or Connect Wallet) */}
+              {/* Mode: Default Choose */}
               {activeConnectMode === "choose" && (
                 <div className="space-y-2 pt-1 w-full max-w-xs mx-auto font-mono text-xs">
                   {connectSuccess && (
-                    <div className="bg-emerald-50 border border-emerald-200 text-[#4C6B00] px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1.5">
+                    <div className="bg-[#00FF87]/15 border border-[#00FF87]/30 text-[#00FF87] px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1.5">
                       <Check className="w-3.5 h-3.5" />
                       <span>Linked: {twitterHandle || walletAddress}</span>
                     </div>
@@ -210,19 +210,19 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={() => setActiveConnectMode("x_input")}
-                      className="bg-black hover:bg-neutral-800 text-white font-semibold py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm"
+                      className="btn-glass py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1.5"
                     >
-                      <span>𝕏 Connect</span>
-                      {twitterHandle && <Check className="w-3 h-3 text-[#CCFF00]" />}
+                      <span>𝕏 Handle</span>
+                      {twitterHandle && <Check className="w-3 h-3 text-[#00FF87]" />}
                     </button>
 
                     <button
                       onClick={() => setActiveConnectMode("wallet_select")}
-                      className="bg-[#CCFF00] hover:bg-[#DFFF3D] text-black font-semibold py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm"
+                      className="btn-neon py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1.5"
                     >
                       <Wallet className="w-3.5 h-3.5" />
                       <span>Wallet</span>
-                      {walletAddress && <Check className="w-3 h-3 text-black" />}
+                      {walletAddress && <Check className="w-3 h-3 text-[#050B07]" />}
                     </button>
                   </div>
                 </div>
@@ -236,23 +236,23 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
                     placeholder="@your_username"
                     value={twitterHandle}
                     onChange={(e) => setTwitterHandle(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-black/15 bg-[#FAFAF7] font-mono text-xs text-black focus:outline-none focus:border-[#4C6B00]"
+                    className="w-full px-3 py-2 rounded-xl border border-[#00FF87]/30 bg-[#050B07] font-mono text-xs text-white focus:outline-none focus:border-[#00FF87]"
                     autoFocus
                   />
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={() => setActiveConnectMode("choose")}
-                      className="w-1/3 py-2 border border-black/10 rounded-xl text-xs font-mono text-black/60 hover:text-black"
+                      className="w-1/3 py-2 btn-glass rounded-xl text-xs font-mono"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isConnecting || !twitterHandle.trim()}
-                      className="flex-1 bg-black text-white font-semibold py-2 rounded-xl text-xs transition disabled:opacity-50"
+                      className="flex-1 btn-neon font-display font-bold py-2 rounded-xl text-xs transition disabled:opacity-50"
                     >
-                      {isConnecting ? "Linking..." : "Save 𝕏 Handle"}
+                      {isConnecting ? "Linking..." : "Save Handle"}
                     </button>
                   </div>
                 </form>
@@ -264,24 +264,24 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
                   <button
                     onClick={() => handleConnectWallet("Robinhood Wallet")}
                     disabled={isConnecting}
-                    className="w-full py-2 px-3 rounded-lg border border-black/10 bg-[#FAFAF7] hover:bg-emerald-50 text-left flex items-center justify-between text-black transition"
+                    className="w-full py-2 px-3 rounded-lg border border-white/10 bg-[#050B07] hover:border-[#00FF87]/40 text-left flex items-center justify-between text-white transition"
                   >
                     <span>🏹 Robinhood Wallet</span>
-                    <span className="text-[9px] text-[#4C6B00] font-bold">Connect</span>
+                    <span className="text-[9px] text-[#00FF87] font-bold">Connect</span>
                   </button>
 
                   <button
-                    onClick={() => handleConnectWallet("MetaMask")}
+                    onClick={() => handleConnectWallet("Phantom")}
                     disabled={isConnecting}
-                    className="w-full py-2 px-3 rounded-lg border border-black/10 bg-[#FAFAF7] hover:bg-emerald-50 text-left flex items-center justify-between text-black transition"
+                    className="w-full py-2 px-3 rounded-lg border border-white/10 bg-[#050B07] hover:border-[#00FF87]/40 text-left flex items-center justify-between text-white transition"
                   >
-                    <span>🦊 MetaMask</span>
-                    <span className="text-[9px] text-[#4C6B00] font-bold">Connect</span>
+                    <span>👻 Phantom</span>
+                    <span className="text-[9px] text-[#00FF87] font-bold">Connect</span>
                   </button>
 
                   <button
                     onClick={() => setActiveConnectMode("choose")}
-                    className="text-[10px] text-black/40 hover:text-black pt-1 block mx-auto underline"
+                    className="text-[10px] text-white/40 hover:text-white pt-1 block mx-auto underline"
                   >
                     Back to options
                   </button>
@@ -292,14 +292,14 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
         </div>
 
         {/* Footer Area with Navigation */}
-        <div className="w-full space-y-4 pt-3 border-t border-black/5 mt-2">
-          {/* Step Progress Dots & Navigation */}
-          <div className="flex items-center justify-between font-mono text-xs text-black/60 px-1">
+        <div className="w-full space-y-4 pt-4 border-t border-white/5 mt-2">
+          {/* Step Progress Dots */}
+          <div className="flex items-center justify-between font-mono text-xs text-white/50 px-1">
             <div className="w-16 text-left">
               {currentStep > 0 ? (
                 <button
                   onClick={handleBack}
-                  className="hover:text-black transition font-medium"
+                  className="hover:text-white transition font-medium"
                 >
                   ← Back
                 </button>
@@ -313,8 +313,8 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
                   key={dot}
                   className={`h-1.5 rounded-full transition-all duration-200 ${
                     dot === currentStep
-                      ? "bg-[#CCFF00] w-3.5"
-                      : "bg-black/15 w-1.5"
+                      ? "bg-[#00FF87] w-4 shadow-[0_0_8px_#00FF87]"
+                      : "bg-white/15 w-1.5"
                   }`}
                 ></span>
               ))}
@@ -324,7 +324,7 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
               {currentStep < totalSteps - 1 ? (
                 <button
                   onClick={handleNext}
-                  className="hover:text-black font-semibold transition"
+                  className="hover:text-white font-semibold transition"
                 >
                   Next →
                 </button>
@@ -337,13 +337,13 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={onClose}
-                className="bg-[#FAFAF7] hover:bg-black/5 text-black font-semibold text-xs py-3 rounded-xl transition"
+                className="btn-glass text-white/70 hover:text-white font-semibold text-xs py-3 rounded-xl transition"
               >
                 Skip Guide
               </button>
               <button
                 onClick={handleNext}
-                className="bg-black hover:bg-neutral-800 text-white font-semibold text-xs py-3 rounded-xl transition"
+                className="btn-neon font-display font-bold text-xs py-3 rounded-xl transition"
               >
                 Next Step
               </button>
@@ -351,9 +351,9 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
           ) : (
             <button
               onClick={onClose}
-              className="w-full bg-[#CCFF00] hover:bg-[#DFFF3D] text-black font-bold text-xs py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm"
+              className="w-full btn-neon font-display font-bold text-xs py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(0,255,135,0.4)]"
             >
-              <span>{connectSuccess ? "Continue with Linked Account →" : "Continue to 𝕏 →"}</span>
+              <span>{connectSuccess ? "Continue to Sanctuary →" : "Continue to 𝕏 →"}</span>
             </button>
           )}
         </div>

@@ -44,7 +44,6 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
   const [copied, setCopied] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
-  // Detect installed wallets strictly on open
   useEffect(() => {
     if (typeof window !== "undefined") {
       setWallets(getAvailableWallets());
@@ -100,26 +99,28 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in font-sans">
-      <div className="bg-white border border-black/10 rounded-3xl w-full max-w-[420px] p-6 shadow-2xl relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in font-sans">
+      <div className="bg-[#0A140E] border border-[#00FF87]/30 rounded-3xl w-full max-w-[420px] p-6 shadow-[0_0_50px_rgba(0,255,135,0.15)] relative overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-black/5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#0E1402] flex items-center justify-center text-[#CCFF00] font-bold text-sm shadow-sm">
-              🏹
+        <div className="flex items-center justify-between pb-4 border-b border-[#00FF87]/15">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#00FF87] to-[#059669] p-0.5 shadow-sm">
+              <div className="w-full h-full bg-[#050B07] rounded-[10px] flex items-center justify-center text-sm font-bold text-[#00FF87]">
+                🏹
+              </div>
             </div>
             <div>
-              <h3 className="font-display font-bold text-base text-black leading-none">
-                {activeAddress ? "Connected Account" : "Connect & Sign In"}
+              <h3 className="font-display font-bold text-base text-white leading-none">
+                {activeAddress ? "Connected Sanctuary Account" : "Connect & Authenticate"}
               </h3>
-              <p className="font-mono text-[10px] text-black/40 mt-1">
+              <p className="font-mono text-[10px] text-[#00FF87]/70 mt-1">
                 Robinhood Chain · Non-Custodial EVM
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full text-black/40 hover:text-black hover:bg-black/5 transition"
+            className="p-1.5 rounded-full text-white/40 hover:text-white hover:bg-white/10 transition"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -128,8 +129,8 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
 
         {/* Error Alert */}
         {errorMessage && (
-          <div className="mt-4 p-3 bg-red-50 border border-red-200/80 rounded-xl flex items-start gap-2 text-red-700 text-xs font-mono">
-            <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+          <div className="mt-4 p-3 bg-red-950/80 border border-red-500/50 rounded-xl flex items-start gap-2 text-red-300 text-xs font-mono">
+            <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
             <div className="flex-1 leading-tight">{errorMessage}</div>
           </div>
         )}
@@ -138,47 +139,47 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
         {activeAddress ? (
           <div className="py-5 space-y-4">
             {showSuccessToast && (
-              <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs p-3 rounded-xl flex items-center gap-2 font-mono animate-fade-in">
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Successfully signed in with {activeWalletName}!</span>
+              <div className="bg-[#00FF87]/15 border border-[#00FF87]/30 text-[#00FF87] text-xs p-3 rounded-xl flex items-center gap-2 font-mono animate-fade-in">
+                <Check className="w-4 h-4 text-[#00FF87] shrink-0" />
+                <span>Successfully authenticated with {activeWalletName}!</span>
               </div>
             )}
 
-            {/* Account Card */}
-            <div className="bg-[#FAFAF7] border border-black/10 rounded-2xl p-4 space-y-3 font-mono text-xs">
+            {/* Account Details Box */}
+            <div className="bg-[#050B07]/80 border border-[#00FF87]/20 rounded-2xl p-4 space-y-3 font-mono text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-black/50 text-[11px]">Wallet Provider:</span>
-                <span className="font-bold text-black flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span className="text-white/50 text-[11px]">Provider:</span>
+                <span className="font-bold text-white flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#00FF87] animate-pulse"></span>
                   {activeWalletName || "Robinhood Wallet"}
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-black/50 text-[11px]">Address:</span>
+                <span className="text-white/50 text-[11px]">Address:</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-black">{formatAddress(activeAddress)}</span>
+                  <span className="font-bold text-[#00FF87]">{formatAddress(activeAddress)}</span>
                   <button
                     onClick={handleCopy}
-                    className="p-1 hover:bg-black/5 rounded text-black/50 hover:text-black transition"
-                    title="Copy full address"
+                    className="p-1 hover:bg-white/10 rounded text-white/50 hover:text-white transition"
+                    title="Copy address"
                   >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? <Check className="w-3.5 h-3.5 text-[#00FF87]" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
                 </div>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-black/50 text-[11px]">Network:</span>
-                <span className="font-bold text-[#4C6B00] flex items-center gap-1">
-                  <span className="live-dot"></span> Robinhood Chain
+                <span className="text-white/50 text-[11px]">Network:</span>
+                <span className="font-bold text-white flex items-center gap-1">
+                  <span className="beacon-dot"></span> Robinhood L2
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-black/50 text-[11px]">Status:</span>
-                <span className="text-[10px] bg-emerald-100/80 text-emerald-800 font-bold px-2 py-0.5 rounded">
-                  Authenticated & Signed
+                <span className="text-white/50 text-[11px]">Signature:</span>
+                <span className="text-[10px] bg-[#00FF87]/15 text-[#00FF87] font-bold px-2 py-0.5 rounded border border-[#00FF87]/30">
+                  SIWE Cryptographic
                 </span>
               </div>
             </div>
@@ -190,7 +191,7 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
                   onClose();
                   if (onHatchRedirect) onHatchRedirect();
                 }}
-                className="w-full bg-[#CCFF00] hover:bg-[#DFFF3D] hover:shadow-[0_0_20px_rgba(140,179,0,0.35)] text-black font-bold text-xs py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm"
+                className="w-full btn-neon font-display font-bold text-xs py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,255,135,0.3)]"
               >
                 <span>Hatch Companion on 𝕏 →</span>
                 <Sparkles className="w-3.5 h-3.5" />
@@ -198,7 +199,7 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
 
               <button
                 onClick={handleDisconnect}
-                className="w-full bg-transparent hover:bg-red-50 text-black/60 hover:text-red-600 border border-black/10 hover:border-red-200 font-mono text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-1.5"
+                className="w-full bg-transparent hover:bg-red-950/40 text-white/50 hover:text-red-400 border border-white/10 hover:border-red-500/30 font-mono text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-1.5"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Disconnect Wallet</span>
@@ -206,35 +207,35 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
             </div>
           </div>
         ) : (
-          /* Connect / Sign-in View */
+          /* Connect Options List */
           <div className="py-4 space-y-3.5">
-            <p className="text-xs text-black/60 leading-relaxed font-sans">
+            <p className="text-xs text-white/60 leading-relaxed font-sans">
               Choose your wallet to detect and sign the authentication request for **Robinhood Chain**.
             </p>
 
-            {/* Loading / Signing status indicator */}
+            {/* Loading Indicator */}
             {isConnecting && (
-              <div className="bg-emerald-50 border border-emerald-200/80 rounded-xl p-3.5 text-center space-y-1.5 animate-pulse font-mono text-xs">
-                <div className="flex items-center justify-center gap-2 text-[#4C6B00] font-bold">
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Wallet Interaction in Progress</span>
+              <div className="bg-[#00FF87]/10 border border-[#00FF87]/30 rounded-xl p-3.5 text-center space-y-1.5 animate-pulse font-mono text-xs">
+                <div className="flex items-center justify-center gap-2 text-[#00FF87] font-bold">
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <span>Awaiting Wallet Approval</span>
                 </div>
-                <p className="text-[11px] text-black/70 font-semibold">{statusMessage}</p>
-                <p className="text-[10px] text-black/45">
+                <p className="text-[11px] text-white/80 font-semibold">{statusMessage}</p>
+                <p className="text-[10px] text-white/45">
                   Please approve the connection & signature prompt in your wallet extension.
                 </p>
               </div>
             )}
 
-            {/* Wallet Options List */}
+            {/* Wallets */}
             <div className="space-y-2 font-mono text-xs">
               {wallets.map((wallet) => (
                 <div
                   key={wallet.id}
                   className={`p-3 rounded-2xl border transition flex items-center justify-between ${
                     wallet.isInstalled
-                      ? "border-emerald-300/80 bg-emerald-50/40 hover:bg-emerald-50/70"
-                      : "border-black/10 bg-[#FAFAF7] hover:bg-white hover:border-black/20"
+                      ? "border-[#00FF87]/40 bg-[#00FF87]/5 hover:bg-[#00FF87]/10"
+                      : "border-white/5 bg-[#050B07]/60 hover:bg-white/5 hover:border-white/10"
                   }`}
                 >
                   <button
@@ -242,23 +243,23 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
                     disabled={isConnecting}
                     className="flex items-center gap-3 flex-1 text-left"
                   >
-                    <span className="text-2xl p-1.5 rounded-xl bg-white border border-black/5 shadow-2xs">
+                    <span className="text-2xl p-1.5 rounded-xl bg-[#050B07] border border-white/10">
                       {wallet.icon}
                     </span>
                     <div>
-                      <div className="font-semibold text-xs text-black flex items-center gap-1.5">
+                      <div className="font-semibold text-xs text-white flex items-center gap-1.5">
                         <span>{wallet.name}</span>
                         {wallet.isInstalled ? (
-                          <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded border border-emerald-200">
+                          <span className="text-[9px] bg-[#00FF87]/20 text-[#00FF87] font-bold px-1.5 py-0.2 rounded border border-[#00FF87]/30">
                             Detected
                           </span>
                         ) : (
-                          <span className="text-[9px] text-black/35 font-normal">
-                            Not Detected
+                          <span className="text-[9px] text-white/30 font-normal">
+                            Not Installed
                           </span>
                         )}
                       </div>
-                      <div className="text-[10px] text-black/45 font-sans leading-tight mt-0.5">
+                      <div className="text-[10px] text-white/45 font-sans leading-tight mt-0.5">
                         {wallet.description}
                       </div>
                     </div>
@@ -270,7 +271,7 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
                         href={wallet.downloadUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-[10px] text-black/40 hover:text-black hover:underline flex items-center gap-0.5"
+                        className="text-[10px] text-white/40 hover:text-[#00FF87] hover:underline flex items-center gap-0.5"
                         title="Get extension"
                       >
                         <span>Get</span>
@@ -280,10 +281,10 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
                     <button
                       onClick={() => handleConnect(wallet)}
                       disabled={isConnecting}
-                      className="p-1 text-black/30 hover:text-[#4C6B00] transition"
+                      className="p-1 text-white/30 hover:text-[#00FF87] transition"
                     >
                       {connectingWalletId === wallet.id ? (
-                        <RefreshCw className="w-4 h-4 animate-spin text-[#4C6B00]" />
+                        <RefreshCw className="w-4 h-4 animate-spin text-[#00FF87]" />
                       ) : (
                         <ArrowRight className="w-4 h-4" />
                       )}
@@ -296,9 +297,9 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
         )}
 
         {/* Footer */}
-        <div className="pt-3 border-t border-black/5 flex items-center justify-between text-[10px] font-mono text-black/40">
+        <div className="pt-3 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-white/40">
           <span className="flex items-center gap-1">
-            <ShieldCheck className="w-3 h-3 text-[#4C6B00]" /> Sign-In With Ethereum (SIWE)
+            <ShieldCheck className="w-3 h-3 text-[#00FF87]" /> SIWE Cryptographic Auth
           </span>
           <span>Zero Gas Fees</span>
         </div>

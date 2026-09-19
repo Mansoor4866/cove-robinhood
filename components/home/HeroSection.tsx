@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { Search, Sparkles, Shield, Zap, ArrowRight, Activity, Terminal } from "lucide-react";
 import { HatchGuideModal } from "@/components/ui/HatchGuideModal";
 
 interface HeroSectionProps {
@@ -21,7 +22,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onSearchUser }) => {
     setTimeout(() => {
       setIsLoading(false);
       if (onSearchUser) onSearchUser(searchInput);
-    }, 500);
+    }, 400);
   };
 
   const handleHatchClick = () => {
@@ -36,86 +37,106 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onSearchUser }) => {
 
   return (
     <>
-      <div className="flex flex-col">
-        {/* Live System Status Pill */}
-        <div className="flex flex-wrap items-center gap-3 mb-5">
-          <span className="font-mono text-xs uppercase tracking-widest text-black/40 flex items-center gap-2">
-            <span className="live-dot"></span>
-            <span>Live on 𝕏 · systems normal</span>
+      <div className="flex flex-col relative z-10">
+        {/* Status Beacon Badge */}
+        <div className="inline-flex items-center gap-2.5 bg-[#0A140E] border border-[#00FF87]/20 rounded-full px-3.5 py-1.5 w-max mb-6 shadow-[0_0_20px_rgba(0,255,135,0.08)]">
+          <span className="beacon-dot"></span>
+          <span className="font-mono text-xs uppercase tracking-widest text-[#00FF87] font-semibold">
+            Sherwood Genesis Matrix · Online
           </span>
         </div>
 
-        {/* Main Heading */}
-        <h1 className="font-display font-bold text-5xl lg:text-6xl leading-[1.02] tracking-tight mb-5 text-black">
-          Your companion,<br />
-          <span className="text-[#4C6B00]">running on Robinhood Chain.</span>
+        {/* Hero Title with Gradient */}
+        <h1 className="font-display font-extrabold text-5xl lg:text-6xl tracking-tight leading-[1.08] mb-6">
+          <span className="text-white">Living AI Companions.</span><br />
+          <span className="text-gradient-mint">Bound On-Chain.</span>
         </h1>
 
-        {/* Subtitle Lore */}
-        <p className="text-black/60 text-lg max-w-md mb-8 leading-relaxed">
-          Cove is the forest virtual pet platform on X — hatch a companion in Sherwood forest today, and train it to be a legendary Robin Hood protector using custom Pixel Art composites.
+        {/* Subtitle */}
+        <p className="text-[#8E9E94] text-lg max-w-lg mb-8 leading-relaxed font-sans font-light">
+          Cove transforms digital creatures into sovereign AI companions on <span className="text-white font-medium">Robinhood Chain</span>. Hatch in Sherwood, care on 𝕏 in natural language, and train your pet with dynamic on-chain DNA.
         </p>
 
-        {/* Primary Action Buttons */}
-        <div className="flex flex-wrap items-center gap-4 mb-3">
+        {/* Action Buttons */}
+        <div className="flex flex-wrap items-center gap-4 mb-8">
           <button
             onClick={handleHatchClick}
-            className="bg-[#CCFF00] hover:bg-[#DFFF3D] hover:shadow-[0_0_24px_rgba(140,179,0,0.35)] text-black font-semibold text-sm px-7 py-3 rounded-full transition-all duration-200 focus:outline-none inline-flex items-center"
+            className="btn-neon font-display font-bold text-sm px-8 py-3.5 rounded-full flex items-center gap-2 tracking-wide uppercase shadow-[0_0_30px_rgba(0,255,135,0.3)]"
           >
-            Hatch on 𝕏 →
+            <span>Hatch on 𝕏 Timeline</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
           <Link
             href="/docs"
-            className="bg-transparent border border-black/20 hover:border-[#4C6B00] hover:text-[#4C6B00] text-black font-semibold text-sm px-7 py-3 rounded-full transition-all duration-200 flex items-center"
+            className="btn-glass font-mono text-xs px-6 py-3.5 rounded-full flex items-center gap-2 uppercase tracking-wider"
           >
-            Read the docs
+            <Terminal className="w-4 h-4 text-[#00FF87]" />
+            <span>View Docs & Protocol</span>
           </Link>
         </div>
 
-        {/* Red Error Message if wallet not connected */}
+        {/* Wallet Error Alert */}
         {walletError && (
-          <div className="mb-6 font-mono text-xs font-bold text-red-600 bg-red-50 border border-red-200/80 px-3 py-1.5 rounded-lg inline-block w-max animate-bounce">
+          <div className="mb-6 font-mono text-xs font-bold text-red-300 bg-red-950/80 border border-red-500/60 px-4 py-2 rounded-xl inline-block w-max animate-bounce">
             {walletError}
           </div>
         )}
-        {!walletError && <div className="mb-7"></div>}
+
+        {/* Live Ecosystem Metric Pillars */}
+        <div className="grid grid-cols-3 gap-3 max-w-lg mb-8 font-mono">
+          <div className="glass-panel p-3.5 rounded-2xl border border-[#00FF87]/15">
+            <div className="text-[10px] text-white/50 uppercase">Hatched</div>
+            <div className="text-lg font-bold text-white mt-0.5">14,892+</div>
+            <div className="text-[9px] text-[#00FF87] flex items-center gap-1 mt-0.5">
+              <span>▲ Live</span>
+            </div>
+          </div>
+
+          <div className="glass-panel p-3.5 rounded-2xl border border-[#00FF87]/15">
+            <div className="text-[10px] text-white/50 uppercase">Speed</div>
+            <div className="text-lg font-bold text-white mt-0.5">&lt;0.001s</div>
+            <div className="text-[9px] text-[#00FF87] flex items-center gap-1 mt-0.5">
+              <span>Robinhood L2</span>
+            </div>
+          </div>
+
+          <div className="glass-panel p-3.5 rounded-2xl border border-[#00FF87]/15">
+            <div className="text-[10px] text-white/50 uppercase">Mint Gas</div>
+            <div className="text-lg font-bold text-[#00FF87] mt-0.5">$0.00</div>
+            <div className="text-[9px] text-white/50 mt-0.5">Sponsored</div>
+          </div>
+        </div>
 
         {/* Lookup User Dashboard Card */}
-        <div className="bg-white border border-black/10 rounded-xl p-5 max-w-md border-glow">
-          <h3 className="font-display font-bold text-sm text-black mb-3">
-            Lookup User Dashboard
-          </h3>
+        <div className="glass-panel rounded-2xl p-5 max-w-lg border border-[#00FF87]/20 relative overflow-hidden">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-display font-bold text-sm text-white flex items-center gap-2">
+              <Search className="w-4 h-4 text-[#00FF87]" />
+              <span>Sanctuary Companion Inspector</span>
+            </h3>
+            <span className="font-mono text-[9px] uppercase tracking-widest text-[#00FF87] bg-[#00FF87]/10 px-2 py-0.5 rounded border border-[#00FF87]/20">
+              Live Index
+            </span>
+          </div>
+
           <form onSubmit={handleSearch} className="flex gap-2">
-            <input
-              type="text"
-              placeholder="@username or email"
-              className="flex-1 px-3 py-1.5 border border-black/10 rounded-lg text-sm bg-transparent focus:outline-none focus:border-[#4C6B00] text-black font-mono"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="Enter @username or wallet 0x..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="w-full pl-4 pr-3 py-2.5 rounded-xl border border-[#00FF87]/20 bg-[#050B07]/80 text-white font-mono text-xs focus:outline-none focus:border-[#00FF87] focus:shadow-[0_0_15px_rgba(0,255,135,0.2)] transition"
+              />
+            </div>
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-black hover:bg-neutral-800 text-white text-xs px-4 py-2 rounded-lg font-semibold transition disabled:opacity-50"
+              className="bg-[#00FF87] hover:bg-[#34D399] text-[#050B07] font-display font-bold text-xs px-5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-sm disabled:opacity-50"
             >
-              {isLoading ? "Loading..." : "Load"}
+              {isLoading ? "Querying..." : "Lookup"}
             </button>
           </form>
-        </div>
-
-        {/* Top 3 Pets Card */}
-        <div className="bg-white border border-black/10 rounded-xl p-5 max-w-md border-glow mt-4">
-          <h3 className="font-display font-bold text-sm text-black mb-3 flex justify-between items-center">
-            <span>Top 3 Pets</span>
-            <span className="font-mono text-[9px] uppercase tracking-widest text-black/40">
-              Leaderboard
-            </span>
-          </h3>
-          <div className="flex flex-col gap-2.5">
-            <div className="text-center py-4 text-black/40 text-[11px] font-mono">
-              Loading top companions...
-            </div>
-          </div>
         </div>
       </div>
 

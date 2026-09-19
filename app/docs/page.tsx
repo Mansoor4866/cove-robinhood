@@ -18,18 +18,18 @@ export default function DocsPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-16">
+    <div className="max-w-7xl mx-auto px-6 py-16">
       {/* Header Banner */}
-      <div className="mb-12 border-b border-black/10 pb-8">
-        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#4C6B00] font-bold mb-3">
-          <span className="live-dot"></span>
-          <span>System Manual · v1.0</span>
+      <div className="mb-12 border-b border-[#00FF87]/15 pb-8">
+        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#00FF87] font-bold mb-3">
+          <span className="beacon-dot"></span>
+          <span>System Manual & Protocol Specs · v1.0</span>
         </div>
-        <h1 className="font-display font-bold text-4xl lg:text-5xl text-black">
-          Cove Documentation
+        <h1 className="font-display font-extrabold text-4xl lg:text-5xl text-white tracking-tight">
+          Cove Protocol <span className="text-gradient-mint">Documentation</span>
         </h1>
-        <p className="text-black/60 text-lg max-w-2xl mt-3">
-          Comprehensive guide to hatching, raising, and adventuring with AI pixel companions on Robinhood Chain.
+        <p className="text-[#8E9E94] text-lg max-w-2xl mt-3 font-sans font-light">
+          Comprehensive guide to hatching, training, and exploring Sherwood with sovereign AI pixel companions on Robinhood Chain.
         </p>
       </div>
 
@@ -40,20 +40,20 @@ export default function DocsPage() {
           onSelectSection={handleSelectSection}
         />
 
-        <div className="flex-1 space-y-16 max-w-2xl">
+        <div className="flex-1 space-y-16 max-w-3xl">
           {DOCS_SECTIONS.map((sec) => (
             <section
               key={sec.id}
               id={sec.id}
-              className="scroll-mt-24 border-b border-black/10 pb-12 last:border-b-0"
+              className="scroll-mt-24 border-b border-white/5 pb-12 last:border-b-0"
             >
-              <span className="font-mono text-xs uppercase tracking-widest text-[#4C6B00] font-bold">
+              <span className="font-mono text-xs uppercase tracking-widest text-[#00FF87] font-bold">
                 {sec.number} · {sec.title}
               </span>
-              <h2 className="font-display font-bold text-3xl text-black mt-2 mb-3">
+              <h2 className="font-display font-bold text-3xl text-white mt-2 mb-4">
                 {sec.subtitle || sec.title}
               </h2>
-              <div className="text-black/70 text-sm leading-relaxed whitespace-pre-line space-y-4">
+              <div className="text-[#8E9E94] text-sm leading-relaxed whitespace-pre-line space-y-4 font-sans font-light">
                 {sec.content}
               </div>
             </section>
