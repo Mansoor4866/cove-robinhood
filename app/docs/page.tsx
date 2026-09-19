@@ -18,17 +18,17 @@ export default function DocsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
       {/* Header Banner */}
-      <div className="mb-12 border-b border-[#00FF87]/15 pb-8">
-        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#00FF87] font-bold mb-3">
-          <span className="beacon-dot"></span>
+      <div className="mb-12 border-b border-[#0d0e11]/10 pb-8">
+        <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#0d0e11]/60 font-semibold mb-3">
+          <span className="w-2 h-2 rounded-full bg-[#58e78f]"></span>
           <span>System Manual & Protocol Specs · v1.0</span>
         </div>
-        <h1 className="font-display font-extrabold text-4xl lg:text-5xl text-white tracking-tight">
-          Cove Protocol <span className="text-gradient-mint">Documentation</span>
+        <h1 className="font-display font-medium text-4xl sm:text-5xl text-[#0d0e11] tracking-tight">
+          Cove Protocol Documentation
         </h1>
-        <p className="text-[#8E9E94] text-lg max-w-2xl mt-3 font-sans font-light">
+        <p className="text-[#0d0e11]/70 text-lg max-w-2xl mt-3 font-sans">
           Comprehensive guide to hatching, training, and exploring Sherwood with sovereign AI pixel companions on Robinhood Chain.
         </p>
       </div>
@@ -45,15 +45,15 @@ export default function DocsPage() {
             <section
               key={sec.id}
               id={sec.id}
-              className="scroll-mt-24 border-b border-white/5 pb-12 last:border-b-0"
+              className="scroll-mt-24 border-b border-[#0d0e11]/10 pb-12 last:border-b-0"
             >
-              <span className="font-mono text-xs uppercase tracking-widest text-[#00FF87] font-bold">
+              <span className="font-mono text-xs uppercase tracking-wider text-[#0053ff] font-bold">
                 {sec.number} · {sec.title}
               </span>
-              <h2 className="font-display font-bold text-3xl text-white mt-2 mb-4">
+              <h2 className="font-display font-bold text-2xl sm:text-3xl text-[#0d0e11] mt-2 mb-4">
                 {sec.subtitle || sec.title}
               </h2>
-              <div className="text-[#8E9E94] text-sm leading-relaxed whitespace-pre-line space-y-4 font-sans font-light">
+              <div className="text-[#0d0e11]/80 text-sm sm:text-base leading-relaxed whitespace-pre-line space-y-4 font-sans">
                 {sec.content}
               </div>
             </section>

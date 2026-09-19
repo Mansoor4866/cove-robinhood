@@ -14,9 +14,9 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({
 }) => {
   return (
     <aside className="w-full md:w-64 shrink-0 font-mono text-xs">
-      <div className="sticky top-28 space-y-1 glass-panel p-4 rounded-2xl border border-[#00FF87]/15">
-        <div className="text-[10px] uppercase tracking-widest text-[#00FF87] font-bold mb-3 px-2 flex items-center gap-1.5">
-          <span className="beacon-dot"></span>
+      <div className="sticky top-24 space-y-1 facto-card p-4">
+        <div className="text-[10px] uppercase tracking-wider text-[#0d0e11]/40 font-bold mb-3 px-2 flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-[#58e78f]"></span>
           <span>Index</span>
         </div>
         <nav className="space-y-1">
@@ -26,8 +26,8 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({
               onClick={() => onSelectSection(sec.id)}
               className={`w-full text-left px-3 py-2 rounded-xl transition-all flex items-center justify-between ${
                 activeSection === sec.id
-                  ? "bg-[#00FF87]/20 text-[#00FF87] font-bold border border-[#00FF87]/30 shadow-[0_0_10px_rgba(0,255,135,0.1)]"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
+                  ? "bg-[#0d0e11] text-white font-bold"
+                  : "text-[#0d0e11]/70 hover:text-[#0d0e11] hover:bg-[#f4f4f4]"
               }`}
             >
               <span>
@@ -39,8 +39,8 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({
             onClick={() => onSelectSection("roster")}
             className={`w-full text-left px-3 py-2 rounded-xl transition-all flex items-center justify-between ${
               activeSection === "roster"
-                ? "bg-[#00FF87]/20 text-[#00FF87] font-bold border border-[#00FF87]/30 shadow-[0_0_10px_rgba(0,255,135,0.1)]"
-                : "text-white/60 hover:text-white hover:bg-white/5"
+                ? "bg-[#0d0e11] text-white font-bold"
+                : "text-[#0d0e11]/70 hover:text-[#0d0e11] hover:bg-[#f4f4f4]"
             }`}
           >
             <span>009 Roster & Factions</span>

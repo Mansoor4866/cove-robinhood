@@ -1,43 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
-import { HeroSanctuary } from "@/components/home/HeroSanctuary";
-import { ActiveStatsBanner } from "@/components/home/ActiveStatsBanner";
-import { QuestDispatcher } from "@/components/home/QuestDispatcher";
-import { LeaderboardPodium } from "@/components/home/LeaderboardPodium";
-import { FeatureDesk } from "@/components/home/FeatureDesk";
-import { TerminalLog } from "@/components/home/TerminalLog";
-import { CardShowcase } from "@/components/home/CardShowcase";
-import { CTASection } from "@/components/home/CTASection";
+import React from "react";
+import { FactoHero } from "@/components/home/FactoHero";
+import { FactoCaseDeck } from "@/components/home/FactoCaseDeck";
+import { FactoApiSection } from "@/components/home/FactoApiSection";
+import { FactoRoster } from "@/components/home/FactoRoster";
+import { FactoCTA } from "@/components/home/FactoCTA";
 
 export default function HomePage() {
-  const [activeUser, setActiveUser] = useState("");
-
   return (
-    <div className="w-full relative">
-      {/* 001 · Master Hero Sanctuary: Interactive 3D Holographic Pod, Egg Incubator, & Pet Care Arena */}
-      <HeroSanctuary onSearchUser={(username) => setActiveUser(username)} />
+    <div className="w-full">
+      {/* 01 · Facto Hero Stage: Giant Typography, Trust Marquee & Interactive Companion Simulator */}
+      <FactoHero />
 
-      {/* 002 · Sherwood Forest Active Telemetry Banner */}
-      <ActiveStatsBanner />
+      {/* 02 · Facto Interactive Case Deck: Expandable Horizontal Feature Stages */}
+      <FactoCaseDeck />
 
-      {/* 003 · Forest Expeditions & Quest Dispatcher */}
-      <QuestDispatcher />
+      {/* 03 · Facto Developer API & Real-Time Execution Sandbox */}
+      <FactoApiSection />
 
-      {/* 004 · 3D Holographic Leaderboard Podium & Standings */}
-      <LeaderboardPodium />
+      {/* 04 · Facto Archetypes Roster & Decentralized Standings */}
+      <FactoRoster />
 
-      {/* 005 · The Sanctuary Matrix (Bento Grid) */}
-      <FeatureDesk />
-
-      {/* 006 · Timeline Log & Interactive CLI */}
-      <TerminalLog />
-
-      {/* 007 · Sovereign Companion Roster */}
-      <CardShowcase />
-
-      {/* 008 · Bottom Portal CTA Banner */}
-      <CTASection />
+      {/* 05 · Facto Final Call to Action */}
+      <FactoCTA />
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Wallet, Sparkles, Shield, Compass, BookOpen, MessageSquare } from "lucide-react";
+import { Menu, X, Wallet, ArrowRight, Shield } from "lucide-react";
 import { HatchGuideModal } from "@/components/ui/HatchGuideModal";
 import { WalletAuthModal } from "@/components/ui/WalletAuthModal";
 import { formatAddress } from "@/lib/web3";
@@ -33,7 +33,7 @@ export const Navbar: React.FC = () => {
   const handleHatchClick = () => {
     const current = localStorage.getItem("cove_wallet_address");
     if (!current) {
-      setWalletError("⚠️ Please connect your wallet first!");
+      setWalletError("Please connect wallet first");
       setWalletModalOpen(true);
       setTimeout(() => setWalletError(""), 4000);
     } else {
@@ -43,148 +43,144 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-[#00FF87]/10 bg-[#050B07]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between">
-          {/* Futuristic Luminous Brand Logo */}
-          <Link href="/" className="flex items-center gap-3.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00FF87] to-[#059669] p-0.5 shadow-[0_0_20px_rgba(0,255,135,0.25)] group-hover:shadow-[0_0_30px_rgba(0,255,135,0.45)] transition-all">
-              <div className="w-full h-full bg-[#050B07] rounded-[10px] flex items-center justify-center text-base">
-                🏹
-              </div>
+      {/* Facto Floating Top Navigation */}
+      <div className="sticky top-4 z-50 px-4 sm:px-6 w-full">
+        <header className="v2-floating-nav h-[64px] px-4 sm:px-6 flex items-center justify-between">
+          {/* Facto Minimalist Brand Wordmark */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-8 h-8 rounded-lg bg-[#0d0e11] text-white flex items-center justify-center font-display font-black text-sm">
+              C
             </div>
-            <div className="flex flex-col">
-              <span className="font-display font-extrabold text-xl tracking-tight text-white flex items-center gap-1">
-                COVE<span className="text-[#00FF87]">.</span>
-              </span>
-              <span className="font-mono text-[9px] uppercase tracking-widest text-[#00FF87]/70 -mt-1 font-bold">
-                Robinhood L2
-              </span>
-            </div>
+            <span className="font-display font-extrabold text-xl tracking-tight text-[#0d0e11] flex items-center">
+              cove<span className="text-[#f243ac]">.</span>
+            </span>
+            <span className="hidden sm:inline-block font-mono text-[10px] uppercase tracking-wider bg-[#0d0e11]/5 px-2 py-0.5 rounded text-[#0d0e11]/60 font-semibold">
+              Robinhood L2
+            </span>
           </Link>
 
-          {/* Desktop Cyber Navigation */}
-          <nav className="hidden md:flex items-center gap-1 bg-[#0A140E]/80 border border-[#00FF87]/15 rounded-full p-1.5 shadow-inner">
+          {/* Facto Centered Navigation Links */}
+          <nav className="hidden md:flex items-center gap-8 text-[15px] font-medium text-[#0d0e11]/70">
             <Link
               href="/"
-              className={`px-4 py-1.5 rounded-full font-mono text-xs uppercase tracking-wider transition ${
-                pathname === "/"
-                  ? "bg-[#00FF87]/15 text-[#00FF87] font-semibold border border-[#00FF87]/30"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
+              className={`transition-colors hover:text-[#0d0e11] ${
+                pathname === "/" ? "text-[#0d0e11] font-semibold" : ""
               }`}
             >
-              Sanctuary
+              Protocol
+            </Link>
+            <Link
+              href="/leaderboard"
+              className={`transition-colors hover:text-[#0d0e11] ${
+                pathname.startsWith("/leaderboard") ? "text-[#0d0e11] font-semibold" : ""
+              }`}
+            >
+              Leaderboard
             </Link>
             <Link
               href="/docs"
-              className={`px-4 py-1.5 rounded-full font-mono text-xs uppercase tracking-wider transition ${
-                pathname.startsWith("/docs")
-                  ? "bg-[#00FF87]/15 text-[#00FF87] font-semibold border border-[#00FF87]/30"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
+              className={`transition-colors hover:text-[#0d0e11] ${
+                pathname.startsWith("/docs") ? "text-[#0d0e11] font-semibold" : ""
               }`}
             >
-              Docs & Lore
+              Documentation
             </Link>
             <button
               onClick={handleHatchClick}
-              className="px-4 py-1.5 rounded-full font-mono text-xs uppercase tracking-wider text-white/60 hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
+              className="hover:text-[#0d0e11] transition-colors"
             >
-              <span>𝕏 Timeline</span>
+              𝕏 Evolution
             </button>
           </nav>
 
-          {/* Desktop Action Buttons */}
-          <div className="hidden md:flex items-center gap-3.5 relative">
-            {/* Wallet Connect Button */}
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center gap-3">
             {walletAddress ? (
               <button
                 onClick={() => setWalletModalOpen(true)}
-                className="bg-[#0A140E] hover:bg-[#0E1B13] border border-[#00FF87]/30 text-[#ECFDF5] font-mono text-xs px-4 py-2 rounded-full transition flex items-center gap-2 shadow-[0_0_15px_rgba(0,255,135,0.1)]"
+                className="v2-btn v2-btn-light !min-h-[42px] !py-2 !px-4 !text-xs font-mono font-semibold"
               >
-                <span className="w-2 h-2 rounded-full bg-[#00FF87] animate-pulse"></span>
+                <span className="w-2 h-2 rounded-full bg-[#58e78f] mr-1.5"></span>
                 <span>{formatAddress(walletAddress)}</span>
               </button>
             ) : (
               <button
                 onClick={() => setWalletModalOpen(true)}
-                className="btn-glass font-mono text-xs px-4 py-2.5 rounded-full flex items-center gap-2"
+                className="v2-btn v2-btn-light !min-h-[42px] !py-2 !px-4 !text-xs"
               >
-                <Wallet className="w-3.5 h-3.5 text-[#00FF87]" />
-                <span>Connect Wallet</span>
+                <Wallet className="w-3.5 h-3.5 mr-1.5" />
+                <span>Connect</span>
               </button>
             )}
 
-            {/* Hatch Yours Neon CTA */}
-            <div className="relative">
-              <button
-                onClick={handleHatchClick}
-                className="btn-neon font-display text-xs tracking-wide px-5 py-2.5 rounded-full flex items-center gap-1.5 uppercase font-bold"
-              >
-                <span>Hatch Companion</span>
-                <span>→</span>
-              </button>
-              {walletError && (
-                <div className="absolute right-0 top-12 whitespace-nowrap bg-red-950/90 border border-red-500/50 text-red-300 font-mono text-[10px] px-3 py-1.5 rounded-lg shadow-xl animate-bounce z-50">
-                  {walletError}
-                </div>
-              )}
-            </div>
+            <button
+              onClick={handleHatchClick}
+              className="v2-btn v2-btn-dark !min-h-[42px] !py-2 !px-5 !text-xs !rounded-lg"
+            >
+              <span>Hatch Pet</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 text-white/70 hover:text-white"
-            aria-label="Toggle Menu"
+            className="md:hidden p-2 text-[#0d0e11]"
+            aria-label="Toggle menu"
           >
-            {mobileOpen ? <X className="w-6 h-6 text-[#00FF87]" /> : <Menu className="w-6 h-6" />}
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-        </div>
+        </header>
 
-        {/* Mobile Drawer */}
+        {/* Mobile Dropdown */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-[#00FF87]/15 bg-[#050B07]/95 backdrop-blur-2xl px-6 py-6 space-y-4 font-mono text-xs uppercase tracking-widest">
+          <div className="md:hidden mt-2 p-4 bg-white/95 backdrop-blur-xl border border-black/10 rounded-2xl shadow-xl space-y-3 font-medium text-sm text-[#0d0e11]">
             <Link
               href="/"
               onClick={() => setMobileOpen(false)}
-              className="block py-2 text-white/80 hover:text-[#00FF87]"
+              className="block py-1.5 hover:text-[#f243ac]"
             >
-              Sanctuary
+              Protocol Overview
+            </Link>
+            <Link
+              href="/leaderboard"
+              onClick={() => setMobileOpen(false)}
+              className="block py-1.5 hover:text-[#f243ac]"
+            >
+              Sherwood Leaderboard
             </Link>
             <Link
               href="/docs"
               onClick={() => setMobileOpen(false)}
-              className="block py-2 text-white/80 hover:text-[#00FF87]"
+              className="block py-1.5 hover:text-[#f243ac]"
             >
-              Docs & Lore
+              Documentation
             </Link>
-            <button
-              onClick={() => {
-                setMobileOpen(false);
-                setWalletModalOpen(true);
-              }}
-              className="w-full text-center btn-glass font-mono text-xs py-3 rounded-xl"
-            >
-              {walletAddress ? `Connected (${formatAddress(walletAddress)})` : "Connect Wallet"}
-            </button>
-            <button
-              onClick={() => {
-                setMobileOpen(false);
-                handleHatchClick();
-              }}
-              className="w-full text-center btn-neon font-display text-xs py-3 rounded-xl mt-2 font-bold uppercase"
-            >
-              Hatch Companion →
-            </button>
-            {walletError && (
-              <p className="text-red-400 text-center font-mono text-xs font-bold mt-2">
-                {walletError}
-              </p>
-            )}
+            <div className="pt-2 flex flex-col gap-2 border-t border-black/5">
+              <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  setWalletModalOpen(true);
+                }}
+                className="v2-btn v2-btn-light !min-h-[44px] !w-full !text-xs font-mono"
+              >
+                {walletAddress ? formatAddress(walletAddress) : "Connect Wallet"}
+              </button>
+              <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  handleHatchClick();
+                }}
+                className="v2-btn v2-btn-dark !min-h-[44px] !w-full !text-xs"
+              >
+                Hatch Companion →
+              </button>
+            </div>
           </div>
         )}
-      </header>
+      </div>
 
-      {/* Modern Web3 Detection & Sign-In Modal */}
+      {/* Wallet Auth Modal */}
       <WalletAuthModal
         isOpen={walletModalOpen}
         onClose={() => setWalletModalOpen(false)}
