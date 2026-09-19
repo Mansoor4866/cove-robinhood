@@ -1,38 +1,42 @@
 "use client";
 
 import React, { useState } from "react";
-import { HeroSection } from "@/components/home/HeroSection";
-import { CompanionPreview } from "@/components/home/CompanionPreview";
+import { HeroSanctuary } from "@/components/home/HeroSanctuary";
 import { ActiveStatsBanner } from "@/components/home/ActiveStatsBanner";
+import { QuestDispatcher } from "@/components/home/QuestDispatcher";
+import { LeaderboardPodium } from "@/components/home/LeaderboardPodium";
 import { FeatureDesk } from "@/components/home/FeatureDesk";
-import { CardShowcase } from "@/components/home/CardShowcase";
 import { TerminalLog } from "@/components/home/TerminalLog";
+import { CardShowcase } from "@/components/home/CardShowcase";
 import { CTASection } from "@/components/home/CTASection";
 
 export default function HomePage() {
   const [activeUser, setActiveUser] = useState("");
 
   return (
-    <div className="w-full">
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-6 pt-16 pb-12 grid lg:grid-cols-2 gap-12 items-center">
-        <HeroSection onSearchUser={(username) => setActiveUser(username)} />
-        <CompanionPreview username={activeUser} />
-      </section>
+    <div className="w-full relative">
+      {/* 001 · Master Hero Sanctuary: Interactive 3D Holographic Pod, Egg Incubator, & Pet Care Arena */}
+      <HeroSanctuary onSearchUser={(username) => setActiveUser(username)} />
 
-      {/* Sherwood Forest Active Telemetry Banner */}
+      {/* 002 · Sherwood Forest Active Telemetry Banner */}
       <ActiveStatsBanner />
 
-      {/* 001 · The Sanctuary Matrix (Bento Grid) */}
+      {/* 003 · Forest Expeditions & Quest Dispatcher */}
+      <QuestDispatcher />
+
+      {/* 004 · 3D Holographic Leaderboard Podium & Standings */}
+      <LeaderboardPodium />
+
+      {/* 005 · The Sanctuary Matrix (Bento Grid) */}
       <FeatureDesk />
 
-      {/* 002 · Timeline Log & Interactive CLI */}
+      {/* 006 · Timeline Log & Interactive CLI */}
       <TerminalLog />
 
-      {/* 003 · Sovereign Companion Roster */}
+      {/* 007 · Sovereign Companion Roster */}
       <CardShowcase />
 
-      {/* 004 · Bottom Portal CTA Banner */}
+      {/* 008 · Bottom Portal CTA Banner */}
       <CTASection />
     </div>
   );
