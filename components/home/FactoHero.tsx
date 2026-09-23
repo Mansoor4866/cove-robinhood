@@ -355,13 +355,15 @@ export const FactoHero: React.FC = () => {
             </p>
 
             <div className="flex flex-wrap items-center gap-4 mb-10">
-              <button
-                onClick={() => setGuideModalOpen(true)}
+              <a
+                href="https://x.com/CoveSherwood"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="v2-btn v2-btn-dark !min-h-[56px] !px-8 !text-base"
               >
-                <span>Hatch on 𝕏 Timeline</span>
+                <span>Follow us on 𝕏</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </a>
               <button
                 onClick={() => {
                   const el = document.getElementById("features");

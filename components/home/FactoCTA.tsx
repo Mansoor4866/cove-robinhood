@@ -26,17 +26,19 @@ export const FactoCTA: React.FC = () => {
           </h2>
 
           <p className="text-white/70 text-base sm:text-lg max-w-xl font-sans leading-relaxed mb-10">
-            Join thousands of rangers in Sherwood Forest. Hatch your autonomous pixel companion on 𝕏 in seconds with zero gas fees.
+            Join thousands of rangers in Sherwood Forest. Hatch and evolve your autonomous pixel companion on Robinhood Chain with zero gas fees.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <button
-              onClick={() => setGuideModalOpen(true)}
+            <a
+              href="https://x.com/CoveSherwood"
+              target="_blank"
+              rel="noopener noreferrer"
               className="v2-btn v2-btn-pink !min-h-[56px] !px-8 !text-base font-bold"
             >
-              <span>Hatch on 𝕏 Timeline</span>
+              <span>Follow us on 𝕏</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </a>
 
             <Link
               href="/docs"

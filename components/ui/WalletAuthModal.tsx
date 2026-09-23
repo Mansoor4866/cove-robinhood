@@ -206,7 +206,7 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
                   }}
                   className="w-full bg-[#00FF87] hover:bg-[#00FF87]/90 active:scale-95 text-[#0d0e11] font-display font-bold text-xs py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(0,255,135,0.4)]"
                 >
-                  <span>Hatch Companion on 𝕏 →</span>
+                  <span>Hatch Companion →</span>
                   <Sparkles className="w-3.5 h-3.5 text-[#0d0e11]" />
                 </button>
               )}

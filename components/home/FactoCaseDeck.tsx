@@ -10,17 +10,17 @@ export const FactoCaseDeck: React.FC = () => {
     {
       id: "01",
       tag: "AI EVOLUTION",
-      title: "Natural Language Care on 𝕏 Timeline",
-      description: "Tag @CoveSherwood on 𝕏 to feed, train, and pet your companion. The autonomous AI agent processes your tweets in natural language, updating your on-chain pet attributes with zero friction.",
+      title: "Autonomous Neural Agent & Combat Training",
+      description: "Each companion possesses an autonomous neural core that dynamically adapts through daily feeding, tactical sparring, and dungeon survival — writing state proofs directly to Robinhood EVM Layer-2 with zero gas fees.",
       accent: "#f243ac",
       bgGradient: "from-[#f243ac]/10 to-transparent",
       badge: "Zero-Gas Agent",
       stats: [
         { label: "Execution Latency", value: "< 0.8s" },
-        { label: "Language Models", value: "Llama-3 & GPT-4o" },
+        { label: "Intelligence Core", value: "Neural Reinforcement" },
         { label: "On-Chain Sync", value: "Robinhood EVM" },
       ],
-      previewType: "tweet",
+      previewType: "agent",
     },
     {
       id: "02",
@@ -168,18 +168,18 @@ export const FactoCaseDeck: React.FC = () => {
 
                 {/* Interactive Dynamic Stage Body */}
                 <div className="bg-[#0d0e11] text-white rounded-2xl p-5 sm:p-6 font-mono text-xs shadow-xl mb-6">
-                  {item.previewType === "tweet" && (
+                  {item.previewType === "agent" && (
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 text-white/60 text-[11px] border-b border-white/10 pb-2">
-                        <span>𝕏 Timeline Parser</span>
+                        <span>Autonomous Neural Core</span>
                         <span className="text-[#58e78f] ml-auto font-bold">● Active 24/7</span>
                       </div>
                       <div className="bg-white/5 p-3 rounded-xl border border-white/10 text-white/90">
-                        <span className="text-[#f243ac] font-bold">@user:</span> @CoveSherwood feed my Robin Fox some wild forest berries and spar for archery practice! 🏹
+                        <span className="text-[#f243ac] font-bold">Trainer Action:</span> Dispatch companion for tactical archery spar against Sherwood Forest Outlaws 🏹
                       </div>
                       <div className="bg-[#58e78f]/10 text-[#58e78f] p-3 rounded-xl border border-[#58e78f]/30 flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 shrink-0" />
-                        <span>AI Response: Robin Fox fed (+20 EXP). Sparring complete (+15 Mana). State recorded on Robinhood L2.</span>
+                        <span>AI Execution: Combat round won (+20 EXP). Mana depleted (-15). State hash validated on Robinhood L2.</span>
                       </div>
                     </div>
                   )}
