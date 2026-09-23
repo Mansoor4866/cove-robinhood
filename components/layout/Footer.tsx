@@ -15,11 +15,11 @@ export const Footer: React.FC = () => {
           <div className="col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <Image
-                src="/cove-logo-dark.jpg"
+                src="/cove-icon-dark.jpg"
                 alt="Cove"
-                height={32}
-                width={100}
-                className="h-8 w-auto object-contain rounded-md"
+                height={36}
+                width={36}
+                className="h-9 w-9 object-contain rounded-lg"
               />
             </div>
             <p className="text-sm text-[#0d0e11]/60 font-sans max-w-sm leading-relaxed mb-4">

@@ -49,16 +49,14 @@ export const Navbar: React.FC = () => {
         <header className="v2-floating-nav h-[64px] px-4 sm:px-6 flex items-center justify-between">
           {/* Cove Brand Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative h-9 w-auto">
-              <Image
-                src="/cove-logo-light.jpg"
-                alt="Cove"
-                height={36}
-                width={120}
-                className="h-9 w-auto object-contain"
-                priority
-              />
-            </div>
+            <Image
+              src="/cove-icon-dark.jpg"
+              alt="Cove"
+              height={36}
+              width={36}
+              className="h-9 w-9 object-contain rounded-lg"
+              priority
+            />
             <span className="hidden sm:inline-block font-mono text-[10px] uppercase tracking-wider bg-[#0d0e11]/5 px-2 py-0.5 rounded text-[#0d0e11]/60 font-semibold">
               Robinhood L2
             </span>
