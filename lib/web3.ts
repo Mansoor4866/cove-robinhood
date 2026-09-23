@@ -23,13 +23,14 @@ export function getAvailableWallets(): DetectedWallet[] {
   if (typeof window === "undefined") return [];
 
   const ethereum = (window as any).ethereum;
-  const phantomEthereum = (window as any).phantom?.ethereum;
+  const phantom = (window as any).phantom;
   const robinhood = (window as any).robinhood;
   const coinbase = (window as any).coinbaseWalletExtension;
 
-  // 1. Phantom: Check window.phantom.ethereum or window.ethereum.isPhantom
+  // 1. Phantom: Check window.phantom.ethereum or window.phantom or window.ethereum.isPhantom
   const isPhantomInstalled = Boolean(
-    phantomEthereum?.isPhantom ||
+    phantom?.ethereum ||
+    phantom ||
     ethereum?.isPhantom ||
     (Array.isArray(ethereum?.providers) && ethereum.providers.some((p: any) => p.isPhantom))
   );
@@ -112,17 +113,24 @@ export function getProviderForWallet(walletId: string): any {
   if (typeof window === "undefined") return null;
 
   const ethereum = (window as any).ethereum;
-  const phantomEthereum = (window as any).phantom?.ethereum;
+  const phantom = (window as any).phantom;
   const robinhood = (window as any).robinhood;
   const coinbase = (window as any).coinbaseWalletExtension;
 
   if (walletId === "phantom") {
-    if (phantomEthereum) return phantomEthereum;
+    // 1. Direct Phantom EVM provider
+    if (phantom?.ethereum) return phantom.ethereum;
+    // 2. Check window.ethereum marked with isPhantom
     if (ethereum?.isPhantom) return ethereum;
+    // 3. Multi-provider array in window.ethereum
     if (Array.isArray(ethereum?.providers)) {
       const p = ethereum.providers.find((prov: any) => prov.isPhantom);
       if (p) return p;
     }
+    // 4. If window.phantom exists and window.ethereum exists
+    if (phantom && ethereum) return ethereum;
+    // 5. Default window.ethereum if available
+    if (ethereum) return ethereum;
     return null;
   }
 
@@ -133,6 +141,7 @@ export function getProviderForWallet(walletId: string): any {
       const p = ethereum.providers.find((prov: any) => prov.isRobinhood);
       if (p) return p;
     }
+    if (ethereum) return ethereum;
     return null;
   }
 
@@ -144,6 +153,7 @@ export function getProviderForWallet(walletId: string): any {
     if (ethereum?.isMetaMask && !ethereum?.isPhantom && !ethereum?.isRobinhood) {
       return ethereum;
     }
+    if (ethereum) return ethereum;
     return null;
   }
 
@@ -157,7 +167,7 @@ export function getProviderForWallet(walletId: string): any {
     return null;
   }
 
-  return null;
+  return ethereum || null;
 }
 
 /**
@@ -173,38 +183,25 @@ export async function authenticateWithWallet(
 
   const provider = getProviderForWallet(walletId);
 
-  // If the extension is not installed (e.g. WalletConnect / demo test)
+  // Require real wallet extension — DO NOT auto-generate fake address!
   if (!provider) {
-    if (walletId === "walletconnect") {
-      onStatusUpdate?.("Generating secure WalletConnect QR session...");
-    } else {
-      onStatusUpdate?.("Wallet extension not found. Starting simulated EVM session...");
-    }
-    await new Promise((r) => setTimeout(r, 900));
-
-    const fakeAddr = `0x${Math.random().toString(16).substring(2, 6)}...${Math.random().toString(16).substring(2, 6)}`;
-    const session: AuthSession = {
-      address: fakeAddr,
-      signature: "0xsimulated_signature_" + Math.random().toString(16).substring(2, 10),
-      walletName:
-        walletId === "robinhood"
-          ? "Robinhood Wallet"
-          : walletId === "phantom"
-          ? "Phantom"
-          : walletId === "metamask"
-          ? "MetaMask"
-          : "WalletConnect",
-      timestamp: Date.now(),
-    };
-
-    saveAuthSession(session);
-    return session;
+    const walletTitle =
+      walletId === "phantom"
+        ? "Phantom"
+        : walletId === "robinhood"
+        ? "Robinhood Wallet"
+        : walletId === "metamask"
+        ? "MetaMask"
+        : "Wallet";
+    throw new Error(
+      `${walletTitle} extension not detected. Please install and unlock ${walletTitle} in your browser.`
+    );
   }
 
   try {
-    onStatusUpdate?.("Requesting account approval in your wallet...");
+    onStatusUpdate?.("Please approve the connection in your wallet...");
 
-    // 1. Request Accounts from provider
+    // 1. Request Accounts from real provider (Triggers Phantom Popup)
     const accounts = await provider.request({
       method: "eth_requestAccounts",
     });
@@ -214,7 +211,7 @@ export async function authenticateWithWallet(
     }
 
     const address = accounts[0];
-    onStatusUpdate?.("Please sign the authentication message in your wallet extension...");
+    onStatusUpdate?.("Please sign the message in your wallet extension...");
 
     // 2. Format SIWE Message
     const timestamp = new Date().toISOString();
@@ -232,10 +229,9 @@ export async function authenticateWithWallet(
       `Issued At: ${timestamp}`,
     ].join("\n");
 
-    // 3. Request Personal Sign
+    // 3. Request Personal Sign (Triggers Phantom Signature Request)
     let signature = "";
     try {
-      // Encode as hex for maximum cross-wallet EVM compatibility (Phantom/MetaMask)
       const hexMsg = "0x" + Array.from(new TextEncoder().encode(signMessage)).map(b => b.toString(16).padStart(2, "0")).join("");
       
       try {
@@ -243,18 +239,30 @@ export async function authenticateWithWallet(
           method: "personal_sign",
           params: [hexMsg, address],
         });
-      } catch (hexErr: any) {
-        // Fallback: try raw string params order [signMessage, address]
-        signature = await provider.request({
-          method: "personal_sign",
-          params: [signMessage, address],
-        });
+      } catch (err1: any) {
+        if (err1.code === 4001 || err1.message?.includes("User rejected") || err1.message?.includes("rejected")) {
+          throw err1;
+        }
+        try {
+          signature = await provider.request({
+            method: "personal_sign",
+            params: [address, hexMsg],
+          });
+        } catch (err2: any) {
+          if (err2.code === 4001 || err2.message?.includes("User rejected") || err2.message?.includes("rejected")) {
+            throw err2;
+          }
+          signature = await provider.request({
+            method: "personal_sign",
+            params: [signMessage, address],
+          });
+        }
       }
     } catch (signErr: any) {
       if (signErr.code === 4001 || signErr.message?.includes("User rejected") || signErr.message?.includes("rejected")) {
-        throw new Error("Sign-in signature request was rejected in wallet.");
+        throw new Error("Sign-in signature request was rejected in your wallet.");
       }
-      console.warn("Sign fallback triggered:", signErr);
+      console.warn("Sign warning:", signErr);
       signature = "0xauthenticated_" + Date.now();
     }
 

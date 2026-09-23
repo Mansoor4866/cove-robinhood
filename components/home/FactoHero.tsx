@@ -3,11 +3,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Shield, Heart, Swords, Apple, Coins } from "lucide-react";
+import { ArrowRight, Shield, Heart, Swords, Apple, Coins, Sparkles, UserCheck, Wallet } from "lucide-react";
 import { sounds } from "@/lib/audio";
 import { HatchGuideModal } from "@/components/ui/HatchGuideModal";
+import { formatAddress } from "@/lib/web3";
+import { Companion } from "@/types/companion";
 
-// Demo companion handle for homepage simulator
+// Demo companion handle for homepage simulator fallback
 const DEMO_HANDLE = "@demo_robin";
 
 function msToCountdown(ms: number): string {
@@ -30,6 +32,11 @@ export const FactoHero: React.FC = () => {
   const [toast, setToast] = useState<{ msg: string; type: "success" | "error" | "info" } | null>(null);
   const [guideModalOpen, setGuideModalOpen] = useState(false);
 
+  // Connected wallet & real companion state
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [activeCompanion, setActiveCompanion] = useState<Companion | null>(null);
+  const [hatchLoading, setHatchLoading] = useState(false);
+
   // Cooldown states (ms remaining)
   const [feedCooldown, setFeedCooldown] = useState(0);
   const [petCooldown, setPetCooldown] = useState(0);
@@ -45,6 +52,55 @@ export const FactoHero: React.FC = () => {
     setTimeout(() => setToast(null), 3500);
   };
 
+  // Sync with user's wallet and load their real companion from Supabase
+  const loadUserCompanion = useCallback(async (forcedAddr?: string | null) => {
+    const address = forcedAddr !== undefined ? forcedAddr : (typeof window !== "undefined" ? localStorage.getItem("cove_wallet_address") : null);
+    const handle = typeof window !== "undefined" ? localStorage.getItem("cove_user_handle") : null;
+    const identifier = address || handle;
+
+    if (!identifier) {
+      setWalletAddress(null);
+      setActiveCompanion(null);
+      return;
+    }
+
+    setWalletAddress(address || null);
+
+    try {
+      const res = await fetch(`/api/lookup?user=${encodeURIComponent(identifier)}`);
+      const data = await res.json();
+      if (data.success && data.hatched && data.companion) {
+        const c = data.companion;
+        setActiveCompanion(c);
+        setLevel(c.level ?? 1);
+        setExp(c.exp ?? 0);
+        setMana(c.mana !== undefined ? c.mana : 100);
+        setFoodTokens(c.foodTokens !== undefined ? c.foodTokens : 10);
+        setHappiness(c.happiness !== undefined ? c.happiness : 100);
+      } else {
+        setActiveCompanion(null);
+      }
+    } catch {
+      console.warn("Failed to lookup user companion");
+    }
+  }, []);
+
+  useEffect(() => {
+    loadUserCompanion();
+
+    const onAuthChange = (e: any) => {
+      const session = e.detail;
+      loadUserCompanion(session?.address || null);
+    };
+
+    window.addEventListener("storage", () => loadUserCompanion());
+    window.addEventListener("cove_auth_changed", onAuthChange);
+    return () => {
+      window.removeEventListener("storage", () => loadUserCompanion());
+      window.removeEventListener("cove_auth_changed", onAuthChange);
+    };
+  }, [loadUserCompanion]);
+
   // Tick down cooldowns every second
   useEffect(() => {
     const interval = setInterval(() => {
@@ -55,13 +111,53 @@ export const FactoHero: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Mana slow regen (1 per 6 minutes locally for demo feel)
+  // Mana slow regen (1 per 6 minutes)
   useEffect(() => {
     const interval = setInterval(() => {
       setMana((prev) => Math.min(100, prev + 1));
     }, 6 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Active user identifier for API calls
+  const getUserIdentifier = () => {
+    return walletAddress || (typeof window !== "undefined" ? localStorage.getItem("cove_user_handle") : null) || DEMO_HANDLE;
+  };
+
+  // Hatch companion for connected user
+  const handleHatch = async () => {
+    const addr = walletAddress || (typeof window !== "undefined" ? localStorage.getItem("cove_wallet_address") : null);
+    const handle = (typeof window !== "undefined" ? localStorage.getItem("cove_user_handle") : null) || (addr ? `@${addr.substring(0, 6)}` : "@sherwood_hero");
+
+    setHatchLoading(true);
+    sounds.playBlip();
+
+    try {
+      const res = await fetch("/api/hatch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: handle, walletAddress: addr || "" }),
+      });
+      const data = await res.json();
+      if (data.success && data.companion) {
+        const c = data.companion;
+        setActiveCompanion(c);
+        setLevel(c.level ?? 1);
+        setExp(c.exp ?? 10);
+        setMana(c.mana ?? 100);
+        setFoodTokens(c.foodTokens ?? 10);
+        setHappiness(c.happiness ?? 100);
+        sounds.playHatchFanfare();
+        showToast(`🎉 Hatched ${c.name} (${c.role}) on Robinhood Chain!`);
+      } else {
+        showToast(data.error || "Failed to hatch", "error");
+      }
+    } catch {
+      showToast("Hatch network request failed", "error");
+    } finally {
+      setHatchLoading(false);
+    }
+  };
 
   const handleFeed = useCallback(async () => {
     if (feedCooldown > 0) {
@@ -76,43 +172,50 @@ export const FactoHero: React.FC = () => {
     setFeedLoading(true);
     sounds.playFeedCrunch();
 
+    const username = getUserIdentifier();
+
     try {
       const res = await fetch("/api/feed", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: DEMO_HANDLE, food: "Sherwood Berries" }),
+        body: JSON.stringify({ username, food: "Sherwood Berries" }),
       });
       const data = await res.json();
 
       if (data.success) {
-        const newExp = exp + 20;
-        if (newExp >= 100) {
-          setLevel((p) => p + 1);
-          setExp(newExp - 100);
-          sounds.playHatchFanfare();
-          showToast(`⭐ LEVEL UP! Robin Fox reached LVL ${level + 1}!`);
+        if (data.companion) {
+          setActiveCompanion(data.companion);
+          setLevel(data.companion.level);
+          setExp(data.companion.exp);
+          setFoodTokens(data.companion.foodTokens ?? Math.max(0, foodTokens - 1));
         } else {
-          setExp(newExp);
-          showToast("🍓 Savoring Sherwood Berries! +20 EXP");
+          const newExp = exp + 20;
+          if (newExp >= 100) {
+            setLevel((p) => p + 1);
+            setExp(newExp - 100);
+            sounds.playHatchFanfare();
+          } else {
+            setExp(newExp);
+          }
+          setFoodTokens((p) => Math.max(0, p - 1));
         }
-        setFoodTokens((p) => Math.max(0, p - 1));
         setFeedCooldown(60 * 60 * 1000); // 60 min
+        showToast(data.reaction || "🍓 +20 EXP!");
       } else {
         if (data.cooldownMs) setFeedCooldown(data.cooldownMs);
         showToast(data.error || "Feed failed", "error");
       }
     } catch {
-      // Local fallback for demo
       const newExp = exp + 20;
       if (newExp >= 100) { setLevel((p) => p + 1); setExp(newExp - 100); sounds.playHatchFanfare(); }
       else setExp(newExp);
       setFoodTokens((p) => Math.max(0, p - 1));
       setFeedCooldown(60 * 60 * 1000);
-      showToast("🍓 +20 EXP (local demo mode)");
+      showToast("🍓 +20 EXP (saved locally)");
     } finally {
       setFeedLoading(false);
     }
-  }, [feedCooldown, foodTokens, exp, level]);
+  }, [feedCooldown, foodTokens, exp, level, walletAddress]);
 
   const handlePet = useCallback(async () => {
     if (petCooldown > 0) {
@@ -123,18 +226,25 @@ export const FactoHero: React.FC = () => {
     setPetLoading(true);
     sounds.playBlip();
 
+    const username = getUserIdentifier();
+
     try {
       const res = await fetch("/api/pet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: DEMO_HANDLE }),
+        body: JSON.stringify({ username }),
       });
       const data = await res.json();
 
       if (data.success) {
-        setHappiness((p) => Math.min(100, p + 10));
+        if (data.companion) {
+          setActiveCompanion(data.companion);
+          setHappiness(data.companion.happiness ?? Math.min(100, happiness + 10));
+        } else {
+          setHappiness((p) => Math.min(100, p + 10));
+        }
         setPetCooldown(30 * 60 * 1000); // 30 min
-        showToast("🦊 *purr* Robin Fox bonds with you! +10 Happiness");
+        showToast(data.reaction || "🦊 *purr* Companion bonds with you! +10 Happiness");
       } else {
         if (data.cooldownMs) setPetCooldown(data.cooldownMs);
         showToast(data.error || "Pet failed", "error");
@@ -142,11 +252,11 @@ export const FactoHero: React.FC = () => {
     } catch {
       setHappiness((p) => Math.min(100, p + 10));
       setPetCooldown(30 * 60 * 1000);
-      showToast("🦊 *purr* Robin Fox bonds with you! +10 Happiness");
+      showToast("🦊 *purr* Companion bonds with you! +10 Happiness");
     } finally {
       setPetLoading(false);
     }
-  }, [petCooldown]);
+  }, [petCooldown, happiness, walletAddress]);
 
   const handleSpar = useCallback(async () => {
     if (sparCooldown > 0) {
@@ -161,24 +271,32 @@ export const FactoHero: React.FC = () => {
     setSparLoading(true);
     sounds.playBlip();
 
+    const username = getUserIdentifier();
+
     try {
       const res = await fetch("/api/spar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: DEMO_HANDLE }),
+        body: JSON.stringify({ username }),
       });
       const data = await res.json();
 
       if (data.success) {
-        setMana((p) => Math.max(0, p - 15));
-        setExp((p) => Math.min(99, p + 15));
-        setSparCooldown(4 * 60 * 60 * 1000); // 4 hrs
-        if (data.tokenReward) {
-          setFoodTokens((p) => p + 1);
-          showToast("⚔️ Spar won! +15 EXP +1 🍓 Food Token");
+        if (data.companion) {
+          setActiveCompanion(data.companion);
+          setLevel(data.companion.level);
+          setExp(data.companion.exp);
+          setMana(data.companion.mana ?? Math.max(0, mana - 15));
+          if (data.tokenReward) {
+            setFoodTokens(data.companion.foodTokens ?? (foodTokens + 1));
+          }
         } else {
-          showToast("⚔️ Archery Sparring complete! +15 EXP");
+          setMana((p) => Math.max(0, p - 15));
+          setExp((p) => Math.min(99, p + 15));
+          if (data.tokenReward) setFoodTokens((p) => p + 1);
         }
+        setSparCooldown(4 * 60 * 60 * 1000); // 4 hrs
+        showToast(data.reaction || "⚔️ Spar complete! +15 EXP");
       } else {
         if (data.cooldownMs) setSparCooldown(data.cooldownMs);
         showToast(data.error || "Spar failed", "error");
@@ -191,7 +309,7 @@ export const FactoHero: React.FC = () => {
     } finally {
       setSparLoading(false);
     }
-  }, [sparCooldown, mana]);
+  }, [sparCooldown, mana, foodTokens, walletAddress]);
 
   const toastColor =
     toast?.type === "error"
@@ -272,7 +390,7 @@ export const FactoHero: React.FC = () => {
                 <div className="flex items-center gap-2.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-[#58e78f] animate-pulse"></div>
                   <span className="font-mono text-xs uppercase tracking-wider text-white/70">
-                    Live Simulator · Stage 01
+                    {walletAddress ? `Trainer: ${formatAddress(walletAddress)}` : "Live Simulator · Demo Stage"}
                   </span>
                 </div>
                 <span className="font-mono text-xs bg-white/10 px-2.5 py-1 rounded text-white font-semibold">
@@ -283,17 +401,45 @@ export const FactoHero: React.FC = () => {
               {/* Character Stage */}
               <div className="relative py-6 flex flex-col items-center justify-center bg-white/[0.03] border border-white/5 rounded-2xl overflow-hidden">
                 <div className="absolute top-0 w-28 h-1 bg-gradient-to-r from-transparent via-[#58e78f] to-transparent shadow-[0_0_15px_#58e78f]"></div>
-                <div className="relative w-28 h-28 rounded-2xl overflow-hidden border border-white/20 shadow-2xl mb-2 group">
-                  <Image
-                    src="/companions/robin-fox.jpg"
-                    alt="Robin Fox Avatar"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    priority
-                  />
-                </div>
-                <h3 className="font-display font-bold text-xl text-white mt-1">Robin Fox</h3>
-                <span className="text-xs text-white/50 font-mono">Genesis Archetype #001 · Sherwood Archer</span>
+                
+                {walletAddress && !activeCompanion ? (
+                  <div className="flex flex-col items-center py-2 text-center">
+                    <div className="w-20 h-20 rounded-2xl bg-white/5 border border-white/15 flex items-center justify-center text-4xl mb-3 animate-pulse">
+                      🥚
+                    </div>
+                    <h3 className="font-display font-bold text-lg text-white">Mystic Genesis Egg</h3>
+                    <p className="text-xs text-white/50 font-mono mt-0.5">Ready to hatch on Robinhood Chain</p>
+                    <button
+                      onClick={handleHatch}
+                      disabled={hatchLoading}
+                      className="mt-4 px-4 py-2 rounded-xl bg-gradient-to-r from-[#58e78f] to-[#f243ac] text-[#0d0e11] font-bold text-xs flex items-center gap-2 shadow-lg active:scale-95 transition"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>{hatchLoading ? "Hatching Random Pet..." : "Hatch Your Companion"}</span>
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="relative w-28 h-28 rounded-2xl overflow-hidden border border-white/20 shadow-2xl mb-2 group">
+                      <Image
+                        src={activeCompanion?.image || "/companions/robin-fox.jpg"}
+                        alt={activeCompanion?.name || "Robin Fox"}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        priority
+                      />
+                    </div>
+                    <h3 className="font-display font-bold text-xl text-white mt-1">
+                      {activeCompanion?.name || "Robin Fox"}
+                    </h3>
+                    <span className="text-xs text-white/50 font-mono">
+                      {activeCompanion
+                        ? `${activeCompanion.rarity} · ${activeCompanion.role}`
+                        : "Genesis Archetype #001 · Sherwood Archer (Demo)"}
+                    </span>
+                  </>
+                )}
+
                 <div className="w-28 h-2 rounded-full bg-gradient-to-r from-transparent via-[#58e78f]/50 to-transparent mt-2"></div>
               </div>
 

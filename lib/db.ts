@@ -49,6 +49,11 @@ function rowToCompanion(row: any): Companion {
     avatarIcon: row.avatar_icon ?? "🦊",
     badge: row.badge ?? "🌿",
     rarity: row.rarity ?? "Common",
+    foodTokens: row.food_tokens ?? 10,
+    mana: row.mana ?? 100,
+    sparWins: row.spar_wins ?? 0,
+    daysActive: row.days_active ?? 1,
+    weeklyScore: row.weekly_score ?? 0,
   };
 }
 
@@ -80,28 +85,44 @@ function companionToRow(c: Companion) {
 }
 
 // ==========================================================
-// 🚀 Core DB Operations
+// 🚀 Core DB Operations (Supports Handle OR Wallet Address)
 // ==========================================================
 
-export async function dbGetCompanion(handle: string): Promise<Companion | null> {
-  const cleanHandle = handle.startsWith("@") ? handle : `@${handle}`;
-  const { data, error } = await supabase
+export async function findCompanionRow(identifier: string): Promise<any | null> {
+  if (!identifier) return null;
+  const clean = identifier.trim();
+  const cleanHandle = clean.startsWith("@") ? clean : `@${clean}`;
+  const rawHandle = clean.replace(/^@/, "");
+
+  // 1. Try matching owner_handle with or without @
+  const { data: byHandle } = await supabase
     .from("companions")
     .select("*")
-    .ilike("owner_handle", cleanHandle)
-    .single();
-  if (error || !data) return null;
-  return rowToCompanion(data);
+    .or(`owner_handle.ilike.${cleanHandle},owner_handle.ilike.${rawHandle}`)
+    .maybeSingle();
+
+  if (byHandle) return byHandle;
+
+  // 2. Try matching owner_address (EVM wallet address)
+  const { data: byAddress } = await supabase
+    .from("companions")
+    .select("*")
+    .ilike("owner_address", clean)
+    .maybeSingle();
+
+  if (byAddress) return byAddress;
+
+  return null;
 }
 
-export async function dbGetCompanionRaw(handle: string): Promise<any | null> {
-  const cleanHandle = handle.startsWith("@") ? handle : `@${handle}`;
-  const { data } = await supabase
-    .from("companions")
-    .select("*")
-    .ilike("owner_handle", cleanHandle)
-    .single();
-  return data || null;
+export async function dbGetCompanion(identifier: string): Promise<Companion | null> {
+  const row = await findCompanionRow(identifier);
+  if (!row) return null;
+  return rowToCompanion(row);
+}
+
+export async function dbGetCompanionRaw(identifier: string): Promise<any | null> {
+  return await findCompanionRow(identifier);
 }
 
 export async function dbCreateCompanion(
@@ -109,6 +130,19 @@ export async function dbCreateCompanion(
   ownerAddress?: string
 ): Promise<Companion> {
   const cleanHandle = ownerHandle.startsWith("@") ? ownerHandle : `@${ownerHandle}`;
+  const address = ownerAddress || "";
+
+  // Check if companion already exists for this handle or wallet address
+  // This guarantees user NEVER loses their existing pet on re-hatching!
+  const existing =
+    (await dbGetCompanion(cleanHandle)) ||
+    (address ? await dbGetCompanion(address) : null);
+
+  if (existing) {
+    return existing;
+  }
+
+  // Each NEW user gets a RANDOM companion from the canonical roster!
   const randomBase = CANONICAL_ROSTER[Math.floor(Math.random() * CANONICAL_ROSTER.length)];
   const newCompanion: Companion = {
     ...randomBase,
@@ -122,7 +156,7 @@ export async function dbCreateCompanion(
     hatchedAt: new Date().toISOString(),
     lastFedAt: new Date().toISOString(),
     ownerHandle: cleanHandle,
-    ownerAddress: ownerAddress || "0x0000...0000",
+    ownerAddress: address || "0x0000...0000",
   };
   const { data, error } = await supabase
     .from("companions")
@@ -143,14 +177,8 @@ export async function dbFeedCompanion(
   ownerHandle: string,
   foodName: string
 ): Promise<{ success: boolean; companion?: Companion; reaction?: string; error?: string; cooldownMs?: number }> {
-  const cleanHandle = ownerHandle.startsWith("@") ? ownerHandle : `@${ownerHandle}`;
-  const { data: row, error: fetchErr } = await supabase
-    .from("companions")
-    .select("*")
-    .ilike("owner_handle", cleanHandle)
-    .single();
-
-  if (fetchErr || !row) return { success: false, error: "Companion not found" };
+  const row = await findCompanionRow(ownerHandle);
+  if (!row) return { success: false, error: "Companion not found" };
 
   // Check food tokens
   if ((row.food_tokens ?? 0) < 1) {
@@ -181,7 +209,7 @@ export async function dbFeedCompanion(
   const { data: updated, error: updateErr } = await supabase
     .from("companions")
     .update(updates)
-    .ilike("owner_handle", cleanHandle)
+    .eq("id", row.id)
     .select()
     .single();
 
@@ -206,13 +234,7 @@ export async function dbFeedCompanion(
 export async function dbPetCompanion(
   ownerHandle: string
 ): Promise<{ success: boolean; companion?: Companion; reaction?: string; error?: string; cooldownMs?: number }> {
-  const cleanHandle = ownerHandle.startsWith("@") ? ownerHandle : `@${ownerHandle}`;
-  const { data: row } = await supabase
-    .from("companions")
-    .select("*")
-    .ilike("owner_handle", cleanHandle)
-    .single();
-
+  const row = await findCompanionRow(ownerHandle);
   if (!row) return { success: false, error: "Companion not found" };
 
   // Check cooldown
@@ -229,7 +251,7 @@ export async function dbPetCompanion(
       happiness: Math.min(100, (row.happiness ?? 100) + 10),
       last_pet_at: new Date().toISOString(),
     })
-    .ilike("owner_handle", cleanHandle)
+    .eq("id", row.id)
     .select()
     .single();
 
@@ -248,13 +270,7 @@ export async function dbPetCompanion(
 export async function dbSparCompanion(
   ownerHandle: string
 ): Promise<{ success: boolean; companion?: Companion; reaction?: string; tokenReward?: boolean; error?: string; cooldownMs?: number }> {
-  const cleanHandle = ownerHandle.startsWith("@") ? ownerHandle : `@${ownerHandle}`;
-  const { data: row } = await supabase
-    .from("companions")
-    .select("*")
-    .ilike("owner_handle", cleanHandle)
-    .single();
-
+  const row = await findCompanionRow(ownerHandle);
   if (!row) return { success: false, error: "Companion not found" };
 
   // Check mana
@@ -287,7 +303,7 @@ export async function dbSparCompanion(
       food_tokens: tokenReward ? (row.food_tokens ?? 0) + 1 : (row.food_tokens ?? 0),
       last_spar_at: new Date().toISOString(),
     })
-    .ilike("owner_handle", cleanHandle)
+    .eq("id", row.id)
     .select()
     .single();
 
@@ -308,13 +324,7 @@ export async function dbSparCompanion(
 export async function dbClaimDailyLogin(
   ownerHandle: string
 ): Promise<{ success: boolean; tokensAwarded?: number; alreadyClaimed?: boolean; error?: string }> {
-  const cleanHandle = ownerHandle.startsWith("@") ? ownerHandle : `@${ownerHandle}`;
-  const { data: row } = await supabase
-    .from("companions")
-    .select("*")
-    .ilike("owner_handle", cleanHandle)
-    .single();
-
+  const row = await findCompanionRow(ownerHandle);
   if (!row) return { success: false, error: "Companion not found" };
 
   // Check if already claimed today
@@ -342,7 +352,7 @@ export async function dbClaimDailyLogin(
       mana: manaRegen,
       last_login_at: new Date().toISOString(),
     })
-    .ilike("owner_handle", cleanHandle);
+    .eq("id", row.id);
 
   return { success: true, alreadyClaimed: false, tokensAwarded: 2 };
 }

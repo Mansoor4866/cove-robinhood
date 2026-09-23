@@ -1,30 +1,59 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { CANONICAL_ROSTER, MOCK_LEADERBOARD } from "@/data/companions";
-import { Trophy, Search, Sparkles, Shield, ArrowRight } from "lucide-react";
+import { Companion } from "@/types/companion";
+import { Trophy, Search, Sparkles, Shield, ArrowRight, Flame } from "lucide-react";
+import { BiWeeklyRewardTracker } from "@/components/leaderboard/BiWeeklyRewardTracker";
 
 export default function LeaderboardPage() {
   const [search, setSearch] = useState("");
   const [filterRarity, setFilterRarity] = useState<string>("ALL");
+  const [companions, setCompanions] = useState<Companion[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const fullLeaderboard = [
-    ...MOCK_LEADERBOARD,
-    ...CANONICAL_ROSTER.slice(3).map((c, i) => ({
-      ...c,
-      id: `comp-00${i + 4}`,
-      level: 30 - i * 2,
-      exp: 40 + i * 5,
-      hunger: 20,
-      happiness: 90,
-      health: 100,
-      energy: 85,
-      hatchedAt: "2026-03-05T00:00:00Z",
-      ownerHandle: `@sherwood_ranger_${i + 1}`,
-      ownerAddress: `0x${(i + 1) * 3333}...abc`,
-    })),
-  ];
+  useEffect(() => {
+    async function loadLeaderboard() {
+      try {
+        const res = await fetch("/api/leaderboard?limit=50");
+        const data = await res.json();
+        if (data.success && Array.isArray(data.leaderboard) && data.leaderboard.length > 0) {
+          setCompanions(data.leaderboard);
+        } else {
+          fallbackMock();
+        }
+      } catch {
+        fallbackMock();
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function fallbackMock() {
+      const mock = [
+        ...MOCK_LEADERBOARD,
+        ...CANONICAL_ROSTER.slice(3).map((c, i) => ({
+          ...c,
+          id: `comp-00${i + 4}`,
+          level: 30 - i * 2,
+          exp: 40 + i * 5,
+          hunger: 20,
+          happiness: 90,
+          health: 100,
+          energy: 85,
+          hatchedAt: "2026-03-05T00:00:00Z",
+          ownerHandle: `@sherwood_ranger_${i + 1}`,
+          ownerAddress: `0x${(i + 1) * 3333}...abc`,
+        })),
+      ];
+      setCompanions(mock);
+    }
+
+    loadLeaderboard();
+  }, []);
+
+  const fullLeaderboard = companions;
 
   const filtered = fullLeaderboard.filter((item) => {
     const matchesSearch =
@@ -82,6 +111,9 @@ export default function LeaderboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Bi-Weekly Genesis Launch & Rewards Tracker */}
+      <BiWeeklyRewardTracker companions={fullLeaderboard} />
 
       {/* Top 3 Podium Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -153,6 +185,7 @@ export default function LeaderboardPage() {
                 <th className="py-4 px-6">Role & Archetype</th>
                 <th className="py-4 px-6">Level</th>
                 <th className="py-4 px-6">EXP Progress</th>
+                <th className="py-4 px-6">Weekly Score</th>
                 <th className="py-4 px-6 text-right">Rarity Tier</th>
               </tr>
             </thead>
@@ -210,6 +243,13 @@ export default function LeaderboardPage() {
                       </div>
                       <span>{entry.exp}/100</span>
                     </div>
+                  </td>
+                  <td className="py-4 px-6 font-mono font-bold text-xs text-[#f59e0b]">
+                    {((entry.weeklyScore && entry.weeklyScore > 0)
+                      ? entry.weeklyScore
+                      : entry.level * 1000 + entry.exp * 10 + (entry.sparWins || 0) * 25 + (entry.daysActive || 1) * 50
+                    ).toLocaleString()}{" "}
+                    pts
                   </td>
                   <td className="py-4 px-6 text-right">
                     <span className="font-mono text-[9px] uppercase px-2.5 py-1 rounded bg-[#0d0e11] text-white font-bold">

@@ -44,6 +44,11 @@ export interface Companion {
   image?: string;
   badge: string;
   rarity: "Common" | "Rare" | "Epic" | "Legendary";
+  foodTokens?: number;
+  mana?: number;
+  sparWins?: number;
+  daysActive?: number;
+  weeklyScore?: number;
 }
 
 export interface AdventureLog {
