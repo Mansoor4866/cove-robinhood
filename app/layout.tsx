@@ -9,10 +9,29 @@ export const metadata: Metadata = {
   description:
     "A sovereign virtual pet and RPG simulation protocol built on Robinhood Chain. Hatch, train, and explore Sherwood Forest autonomously on X.",
   keywords: ["Robinhood Chain", "Web3 AI", "Autonomous Pets", "Pixel Art", "Tamagotchi", "NFT", "RPG", "Cove"],
+  icons: {
+    icon: "/favicon-icon.jpg",
+    apple: "/favicon-icon.jpg",
+    shortcut: "/favicon-icon.jpg",
+  },
   openGraph: {
     title: "Cove — Sovereign AI Companions on Robinhood Chain",
     description: "Raise your sovereign AI companion in public on 𝕏, powered by Robinhood EVM Layer-2.",
     type: "website",
+    images: [
+      {
+        url: "/cove-banner.png",
+        width: 1500,
+        height: 500,
+        alt: "Cove — Sovereign AI Companions",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cove — Sovereign AI Companions on Robinhood Chain",
+    description: "Raise your sovereign AI companion in public on 𝕏, powered by Robinhood EVM Layer-2.",
+    images: ["/cove-banner.png"],
   },
 };
 

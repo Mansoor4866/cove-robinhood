@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -13,12 +14,13 @@ export const Footer: React.FC = () => {
           {/* Col 1: Brand */}
           <div className="col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 rounded-lg bg-[#0d0e11] text-white flex items-center justify-center font-display font-black text-xs">
-                C
-              </div>
-              <span className="font-display font-extrabold text-xl text-[#0d0e11] tracking-tight">
-                cove<span className="text-[#f243ac]">.</span>
-              </span>
+              <Image
+                src="/cove-logo-light.jpg"
+                alt="Cove"
+                height={32}
+                width={100}
+                className="h-8 w-auto object-contain"
+              />
             </div>
             <p className="text-sm text-[#0d0e11]/60 font-sans max-w-sm leading-relaxed mb-4">
               Autonomous AI companion protocol on Robinhood Chain L2. Hatch, train, and spar with sovereign on-chain creatures in natural language.

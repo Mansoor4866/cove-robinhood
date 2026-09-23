@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X, Wallet, ArrowRight, Shield } from "lucide-react";
 import { HatchGuideModal } from "@/components/ui/HatchGuideModal";
@@ -46,14 +47,18 @@ export const Navbar: React.FC = () => {
       {/* Facto Floating Top Navigation */}
       <div className="sticky top-4 z-50 px-4 sm:px-6 w-full">
         <header className="v2-floating-nav h-[64px] px-4 sm:px-6 flex items-center justify-between">
-          {/* Facto Minimalist Brand Wordmark */}
+          {/* Cove Brand Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 rounded-lg bg-[#0d0e11] text-white flex items-center justify-center font-display font-black text-sm">
-              C
+            <div className="relative h-9 w-auto">
+              <Image
+                src="/cove-logo-light.jpg"
+                alt="Cove"
+                height={36}
+                width={120}
+                className="h-9 w-auto object-contain"
+                priority
+              />
             </div>
-            <span className="font-display font-extrabold text-xl tracking-tight text-[#0d0e11] flex items-center">
-              cove<span className="text-[#f243ac]">.</span>
-            </span>
             <span className="hidden sm:inline-block font-mono text-[10px] uppercase tracking-wider bg-[#0d0e11]/5 px-2 py-0.5 rounded text-[#0d0e11]/60 font-semibold">
               Robinhood L2
             </span>
