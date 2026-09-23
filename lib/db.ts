@@ -3,7 +3,7 @@ import { Companion } from "@/types/companion";
 import { CANONICAL_ROSTER, MOCK_LEADERBOARD } from "@/data/companions";
 
 // ==========================================================
-// 🛡️ Supabase Client (Server-side only — uses service role key)
+// 🛡️ Supabase Client
 // ==========================================================
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey =
@@ -13,7 +13,17 @@ const supabaseKey =
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // ==========================================================
-// 🔄 Row <-> Companion mappers (snake_case DB ↔ camelCase TS)
+// ⏱️ Cooldown constants
+// ==========================================================
+export const COOLDOWNS = {
+  FEED_MS:  60 * 60 * 1000,       // 60 minutes
+  PET_MS:   30 * 60 * 1000,       // 30 minutes
+  SPAR_MS:  4  * 60 * 60 * 1000,  // 4 hours
+  MANA_REGEN_PER_HOUR: 10,
+};
+
+// ==========================================================
+// 🔄 Row <-> Companion mappers
 // ==========================================================
 function rowToCompanion(row: any): Companion {
   return {
@@ -64,39 +74,42 @@ function companionToRow(c: Companion) {
     avatar_icon: c.avatarIcon,
     badge: c.badge,
     rarity: c.rarity,
+    food_tokens: 10,
+    mana: 100,
   };
 }
 
 // ==========================================================
-// 🚀 Unified Database Operations
+// 🚀 Core DB Operations
 // ==========================================================
 
-/**
- * Get companion by Twitter/X handle
- */
 export async function dbGetCompanion(handle: string): Promise<Companion | null> {
   const cleanHandle = handle.startsWith("@") ? handle : `@${handle}`;
-
   const { data, error } = await supabase
     .from("companions")
     .select("*")
     .ilike("owner_handle", cleanHandle)
     .single();
-
   if (error || !data) return null;
   return rowToCompanion(data);
 }
 
-/**
- * Create a new companion (random archetype from CANONICAL_ROSTER)
- */
+export async function dbGetCompanionRaw(handle: string): Promise<any | null> {
+  const cleanHandle = handle.startsWith("@") ? handle : `@${handle}`;
+  const { data } = await supabase
+    .from("companions")
+    .select("*")
+    .ilike("owner_handle", cleanHandle)
+    .single();
+  return data || null;
+}
+
 export async function dbCreateCompanion(
   ownerHandle: string,
   ownerAddress?: string
 ): Promise<Companion> {
   const cleanHandle = ownerHandle.startsWith("@") ? ownerHandle : `@${ownerHandle}`;
   const randomBase = CANONICAL_ROSTER[Math.floor(Math.random() * CANONICAL_ROSTER.length)];
-
   const newCompanion: Companion = {
     ...randomBase,
     id: crypto.randomUUID(),
@@ -111,56 +124,60 @@ export async function dbCreateCompanion(
     ownerHandle: cleanHandle,
     ownerAddress: ownerAddress || "0x0000...0000",
   };
-
   const { data, error } = await supabase
     .from("companions")
     .insert(companionToRow(newCompanion))
     .select()
     .single();
-
   if (error) {
     console.error("dbCreateCompanion error:", error.message);
-    // Fallback: return the in-memory object if DB insert fails
     return newCompanion;
   }
-
   return rowToCompanion(data);
 }
 
-/**
- * Feed companion (+EXP, level up logic, hunger reset)
- */
+// ==========================================================
+// 🍓 FEED — costs 1 Food Token, 60min cooldown, +20 EXP
+// ==========================================================
 export async function dbFeedCompanion(
   ownerHandle: string,
   foodName: string
-): Promise<{ success: boolean; companion?: Companion; reaction?: string; error?: string }> {
+): Promise<{ success: boolean; companion?: Companion; reaction?: string; error?: string; cooldownMs?: number }> {
   const cleanHandle = ownerHandle.startsWith("@") ? ownerHandle : `@${ownerHandle}`;
-
-  // 1. Fetch current companion
-  const { data: existing, error: fetchErr } = await supabase
+  const { data: row, error: fetchErr } = await supabase
     .from("companions")
     .select("*")
     .ilike("owner_handle", cleanHandle)
     .single();
 
-  if (fetchErr || !existing) {
-    return { success: false, error: "Companion not found" };
+  if (fetchErr || !row) return { success: false, error: "Companion not found" };
+
+  // Check food tokens
+  if ((row.food_tokens ?? 0) < 1) {
+    return { success: false, error: "Not enough Food Tokens! Earn more by logging in daily or sparring." };
   }
 
-  // 2. Calculate new stats
-  const expGain = 15;
-  const newExp = existing.exp + expGain;
-  const isLevelUp = newExp >= existing.max_exp;
+  // Check cooldown
+  if (row.last_fed_at) {
+    const elapsed = Date.now() - new Date(row.last_fed_at).getTime();
+    if (elapsed < COOLDOWNS.FEED_MS) {
+      return { success: false, error: "Feed cooldown active!", cooldownMs: COOLDOWNS.FEED_MS - elapsed };
+    }
+  }
+
+  const expGain = 20;
+  const newExp = row.exp + expGain;
+  const isLevelUp = newExp >= (row.max_exp ?? 100);
 
   const updates = {
     hunger: 0,
-    exp: isLevelUp ? newExp - existing.max_exp : newExp,
-    level: isLevelUp ? existing.level + 1 : existing.level,
-    happiness: Math.min(100, existing.happiness + 10),
+    food_tokens: (row.food_tokens ?? 1) - 1,
+    exp: isLevelUp ? newExp - (row.max_exp ?? 100) : newExp,
+    level: isLevelUp ? row.level + 1 : row.level,
+    happiness: Math.min(100, (row.happiness ?? 100) + 5),
     last_fed_at: new Date().toISOString(),
   };
 
-  // 3. Update in Supabase
   const { data: updated, error: updateErr } = await supabase
     .from("companions")
     .update(updates)
@@ -168,9 +185,7 @@ export async function dbFeedCompanion(
     .select()
     .single();
 
-  if (updateErr || !updated) {
-    return { success: false, error: "Failed to update companion" };
-  }
+  if (updateErr || !updated) return { success: false, error: "Failed to update companion" };
 
   const companion = rowToCompanion(updated);
   const reactions = [
@@ -178,27 +193,174 @@ export async function dbFeedCompanion(
     `crunching on ${foodName}, energy refilled and tail wagging!`,
     `dipping ${foodName} carefully, purring with content!`,
   ];
-  const reaction = `▲ sanctuary: ${companion.name} ${reactions[Math.floor(Math.random() * reactions.length)]}`;
+  const reaction = isLevelUp
+    ? `⭐ LEVEL UP! ${companion.name} reached LVL ${companion.level}!`
+    : `▲ sanctuary: ${companion.name} ${reactions[Math.floor(Math.random() * reactions.length)]}`;
 
   return { success: true, companion, reaction };
 }
 
-/**
- * Get leaderboard — sorted by level desc, exp desc
- */
+// ==========================================================
+// 💛 PET — free, 30min cooldown, +10 Happiness
+// ==========================================================
+export async function dbPetCompanion(
+  ownerHandle: string
+): Promise<{ success: boolean; companion?: Companion; reaction?: string; error?: string; cooldownMs?: number }> {
+  const cleanHandle = ownerHandle.startsWith("@") ? ownerHandle : `@${ownerHandle}`;
+  const { data: row } = await supabase
+    .from("companions")
+    .select("*")
+    .ilike("owner_handle", cleanHandle)
+    .single();
+
+  if (!row) return { success: false, error: "Companion not found" };
+
+  // Check cooldown
+  if (row.last_pet_at) {
+    const elapsed = Date.now() - new Date(row.last_pet_at).getTime();
+    if (elapsed < COOLDOWNS.PET_MS) {
+      return { success: false, error: "Pet cooldown active!", cooldownMs: COOLDOWNS.PET_MS - elapsed };
+    }
+  }
+
+  const { data: updated } = await supabase
+    .from("companions")
+    .update({
+      happiness: Math.min(100, (row.happiness ?? 100) + 10),
+      last_pet_at: new Date().toISOString(),
+    })
+    .ilike("owner_handle", cleanHandle)
+    .select()
+    .single();
+
+  if (!updated) return { success: false, error: "Failed to pet companion" };
+
+  return {
+    success: true,
+    companion: rowToCompanion(updated),
+    reaction: `🦊 *purr* ${row.name} bonds with you! Happiness +10`,
+  };
+}
+
+// ==========================================================
+// ⚔️ SPAR — costs 15 Mana, 4hr cooldown, +15 EXP, chance +1 Food Token
+// ==========================================================
+export async function dbSparCompanion(
+  ownerHandle: string
+): Promise<{ success: boolean; companion?: Companion; reaction?: string; tokenReward?: boolean; error?: string; cooldownMs?: number }> {
+  const cleanHandle = ownerHandle.startsWith("@") ? ownerHandle : `@${ownerHandle}`;
+  const { data: row } = await supabase
+    .from("companions")
+    .select("*")
+    .ilike("owner_handle", cleanHandle)
+    .single();
+
+  if (!row) return { success: false, error: "Companion not found" };
+
+  // Check mana
+  const currentMana = row.mana ?? 100;
+  if (currentMana < 15) {
+    return { success: false, error: "Not enough Mana! Wait for mana to regenerate (10/hour)." };
+  }
+
+  // Check cooldown
+  if (row.last_spar_at) {
+    const elapsed = Date.now() - new Date(row.last_spar_at).getTime();
+    if (elapsed < COOLDOWNS.SPAR_MS) {
+      return { success: false, error: "Spar cooldown active!", cooldownMs: COOLDOWNS.SPAR_MS - elapsed };
+    }
+  }
+
+  // 30% chance to win a Food Token
+  const tokenReward = Math.random() < 0.3;
+  const expGain = 15;
+  const newExp = row.exp + expGain;
+  const isLevelUp = newExp >= (row.max_exp ?? 100);
+
+  const { data: updated } = await supabase
+    .from("companions")
+    .update({
+      mana: Math.max(0, currentMana - 15),
+      exp: isLevelUp ? newExp - (row.max_exp ?? 100) : newExp,
+      level: isLevelUp ? row.level + 1 : row.level,
+      spar_wins: (row.spar_wins ?? 0) + 1,
+      food_tokens: tokenReward ? (row.food_tokens ?? 0) + 1 : (row.food_tokens ?? 0),
+      last_spar_at: new Date().toISOString(),
+    })
+    .ilike("owner_handle", cleanHandle)
+    .select()
+    .single();
+
+  if (!updated) return { success: false, error: "Failed to spar" };
+
+  const reaction = isLevelUp
+    ? `⭐ LEVEL UP from sparring! ${row.name} reached LVL ${updated.level}!`
+    : tokenReward
+    ? `⚔️ ${row.name} won the spar! +15 EXP +1 🍓 Food Token`
+    : `⚔️ ${row.name} completed Archery Sparring! +15 EXP`;
+
+  return { success: true, companion: rowToCompanion(updated), reaction, tokenReward };
+}
+
+// ==========================================================
+// 🎁 DAILY LOGIN — +2 Food Tokens, mana regeneration
+// ==========================================================
+export async function dbClaimDailyLogin(
+  ownerHandle: string
+): Promise<{ success: boolean; tokensAwarded?: number; alreadyClaimed?: boolean; error?: string }> {
+  const cleanHandle = ownerHandle.startsWith("@") ? ownerHandle : `@${ownerHandle}`;
+  const { data: row } = await supabase
+    .from("companions")
+    .select("*")
+    .ilike("owner_handle", cleanHandle)
+    .single();
+
+  if (!row) return { success: false, error: "Companion not found" };
+
+  // Check if already claimed today
+  if (row.last_login_at) {
+    const lastLogin = new Date(row.last_login_at);
+    const now = new Date();
+    const sameDay =
+      lastLogin.getUTCFullYear() === now.getUTCFullYear() &&
+      lastLogin.getUTCMonth() === now.getUTCMonth() &&
+      lastLogin.getUTCDate() === now.getUTCDate();
+    if (sameDay) return { success: true, alreadyClaimed: true, tokensAwarded: 0 };
+  }
+
+  // Regen mana based on hours elapsed
+  const hoursElapsed = row.last_login_at
+    ? Math.floor((Date.now() - new Date(row.last_login_at).getTime()) / (1000 * 60 * 60))
+    : 0;
+  const manaRegen = Math.min(100, (row.mana ?? 0) + hoursElapsed * COOLDOWNS.MANA_REGEN_PER_HOUR);
+
+  await supabase
+    .from("companions")
+    .update({
+      food_tokens: (row.food_tokens ?? 0) + 2,
+      days_active: (row.days_active ?? 0) + 1,
+      mana: manaRegen,
+      last_login_at: new Date().toISOString(),
+    })
+    .ilike("owner_handle", cleanHandle);
+
+  return { success: true, alreadyClaimed: false, tokensAwarded: 2 };
+}
+
+// ==========================================================
+// 🏆 LEADERBOARD — sorted by weekly_score
+// ==========================================================
 export async function dbGetLeaderboard(limit: number = 50): Promise<Companion[]> {
   const { data, error } = await supabase
     .from("companions")
     .select("*")
+    .order("weekly_score", { ascending: false })
     .order("level", { ascending: false })
-    .order("exp", { ascending: false })
     .limit(limit);
 
   if (error || !data) {
-    // Fallback to mock data if DB is unavailable
     console.warn("dbGetLeaderboard fallback to mock:", error?.message);
     return MOCK_LEADERBOARD.slice(0, limit);
   }
-
   return data.map(rowToCompanion);
 }

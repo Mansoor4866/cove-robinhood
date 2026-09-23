@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { dbFeedCompanion } from "@/lib/db";
+import { dbPetCompanion } from "@/lib/db";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const food = body.food || "Sherwood Berries";
     const username = body.username || "@mock_user";
-
-    const result = await dbFeedCompanion(username, food);
+    const result = await dbPetCompanion(username);
 
     if (!result.success) {
       return NextResponse.json(
@@ -20,11 +18,9 @@ export async function POST(request: Request) {
       success: true,
       reaction: result.reaction,
       companion: result.companion,
-      rewardExp: 20,
-      hungerReset: true,
-      cooldownMs: 60 * 60 * 1000,
+      happinessGain: 10,
     });
   } catch {
-    return NextResponse.json({ success: false, error: "Failed to feed companion" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Failed to pet companion" }, { status: 500 });
   }
 }
