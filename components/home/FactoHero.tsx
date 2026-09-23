@@ -72,6 +72,10 @@ export const FactoHero: React.FC = () => {
       if (data.success && data.hatched && data.companion) {
         const c = data.companion;
         setActiveCompanion(c);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("cove_has_hatched", "true");
+          window.dispatchEvent(new CustomEvent("cove_hatch_status_changed", { detail: { hatched: true } }));
+        }
         setLevel(c.level ?? 1);
         setExp(c.exp ?? 0);
         setMana(c.mana !== undefined ? c.mana : 100);
@@ -79,6 +83,10 @@ export const FactoHero: React.FC = () => {
         setHappiness(c.happiness !== undefined ? c.happiness : 100);
       } else {
         setActiveCompanion(null);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("cove_has_hatched");
+          window.dispatchEvent(new CustomEvent("cove_hatch_status_changed", { detail: { hatched: false } }));
+        }
       }
     } catch {
       console.warn("Failed to lookup user companion");
@@ -142,6 +150,10 @@ export const FactoHero: React.FC = () => {
       if (data.success && data.companion) {
         const c = data.companion;
         setActiveCompanion(c);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("cove_has_hatched", "true");
+          window.dispatchEvent(new CustomEvent("cove_hatch_status_changed", { detail: { hatched: true } }));
+        }
         setLevel(c.level ?? 1);
         setExp(c.exp ?? 10);
         setMana(c.mana ?? 100);

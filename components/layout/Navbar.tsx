@@ -14,20 +14,56 @@ export const Navbar: React.FC = () => {
   const [guideModalOpen, setGuideModalOpen] = useState(false);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [hasHatched, setHasHatched] = useState<boolean>(false);
   const [walletError, setWalletError] = useState<string>("");
   const pathname = usePathname();
 
   useEffect(() => {
-    const checkWallet = () => {
+    let isMounted = true;
+
+    const checkWalletAndHatch = async () => {
+      if (typeof window === "undefined") return;
       const saved = localStorage.getItem("cove_wallet_address");
+      const handle = localStorage.getItem("cove_user_handle");
       setWalletAddress(saved);
+
+      const identifier = saved || handle;
+      if (!identifier) {
+        setHasHatched(false);
+        return;
+      }
+
+      // Check cached state first for instantaneous UI update
+      if (localStorage.getItem("cove_has_hatched") === "true") {
+        setHasHatched(true);
+      }
+
+      try {
+        const res = await fetch(`/api/lookup?user=${encodeURIComponent(identifier)}`);
+        const data = await res.json();
+        if (!isMounted) return;
+        if (data.success && data.hatched) {
+          setHasHatched(true);
+          localStorage.setItem("cove_has_hatched", "true");
+        } else {
+          setHasHatched(false);
+          localStorage.removeItem("cove_has_hatched");
+        }
+      } catch {
+        // preserve local cache on network error
+      }
     };
-    checkWallet();
-    window.addEventListener("storage", checkWallet);
-    window.addEventListener("cove_auth_changed", checkWallet);
+
+    checkWalletAndHatch();
+    window.addEventListener("storage", checkWalletAndHatch);
+    window.addEventListener("cove_auth_changed", checkWalletAndHatch);
+    window.addEventListener("cove_hatch_status_changed", checkWalletAndHatch);
+
     return () => {
-      window.removeEventListener("storage", checkWallet);
-      window.removeEventListener("cove_auth_changed", checkWallet);
+      isMounted = false;
+      window.removeEventListener("storage", checkWalletAndHatch);
+      window.removeEventListener("cove_auth_changed", checkWalletAndHatch);
+      window.removeEventListener("cove_hatch_status_changed", checkWalletAndHatch);
     };
   }, []);
 
@@ -88,12 +124,14 @@ export const Navbar: React.FC = () => {
             >
               Documentation
             </Link>
-            <button
-              onClick={handleHatchClick}
-              className="hover:text-[#0d0e11] transition-colors"
-            >
-              𝕏 Evolution
-            </button>
+            {!hasHatched && (
+              <button
+                onClick={handleHatchClick}
+                className="hover:text-[#0d0e11] transition-colors"
+              >
+                𝕏 Evolution
+              </button>
+            )}
           </nav>
 
           {/* Desktop Actions */}
@@ -116,13 +154,15 @@ export const Navbar: React.FC = () => {
               </button>
             )}
 
-            <button
-              onClick={handleHatchClick}
-              className="v2-btn v2-btn-dark !min-h-[42px] !py-2 !px-5 !text-xs !rounded-lg"
-            >
-              <span>Hatch Pet</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            {!hasHatched && (
+              <button
+                onClick={handleHatchClick}
+                className="v2-btn v2-btn-dark !min-h-[42px] !py-2 !px-5 !text-xs !rounded-lg"
+              >
+                <span>Hatch Pet</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -180,15 +220,17 @@ export const Navbar: React.FC = () => {
               >
                 {walletAddress ? formatAddress(walletAddress) : "Connect Wallet"}
               </button>
-              <button
-                onClick={() => {
-                  setMobileOpen(false);
-                  handleHatchClick();
-                }}
-                className="v2-btn v2-btn-dark !min-h-[44px] !w-full !text-xs"
-              >
-                Hatch Companion →
-              </button>
+              {!hasHatched && (
+                <button
+                  onClick={() => {
+                    setMobileOpen(false);
+                    handleHatchClick();
+                  }}
+                  className="v2-btn v2-btn-dark !min-h-[44px] !w-full !text-xs"
+                >
+                  Hatch Companion →
+                </button>
+              )}
             </div>
           </div>
         )}

@@ -321,9 +321,11 @@ export function disconnectWallet() {
   localStorage.removeItem("cove_wallet_signature");
   localStorage.removeItem("cove_wallet_name");
   localStorage.removeItem("cove_wallet_time");
+  localStorage.removeItem("cove_has_hatched");
 
   window.dispatchEvent(new Event("storage"));
   window.dispatchEvent(new CustomEvent("cove_auth_changed", { detail: null }));
+  window.dispatchEvent(new CustomEvent("cove_hatch_status_changed", { detail: { hatched: false } }));
 }
 
 /**
