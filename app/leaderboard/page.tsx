@@ -223,14 +223,9 @@ export default function LeaderboardPage() {
                       </div>
                     </td>
                     <td className="py-4 px-6 font-mono text-xs">
-                      <a
-                        href={`https://x.com/${entry.ownerHandle.replace("@", "")}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#0053ff] hover:underline font-semibold"
-                      >
+                      <span className="text-[#0053ff] font-semibold bg-[#0053ff]/5 px-2.5 py-1 rounded-lg border border-[#0053ff]/10">
                         {entry.ownerHandle}
-                      </a>
+                      </span>
                     </td>
                     <td className="py-4 px-6 text-xs text-[#0d0e11]/70">{entry.role}</td>
                     <td className="py-4 px-6 font-mono font-bold text-[#0d0e11]">

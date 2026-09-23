@@ -4,8 +4,11 @@ import { dbCreateCompanion } from "@/lib/db";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const username = body.username || "@mock_user";
-    const walletAddress = body.walletAddress || "0x0000...0000";
+    const walletAddress = body.walletAddress || "";
+    const formattedFromAddr = walletAddress && walletAddress.length > 10
+      ? `${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`
+      : walletAddress;
+    const username = body.username || formattedFromAddr || "0x0000...0000";
 
     const companion = await dbCreateCompanion(username, walletAddress);
 

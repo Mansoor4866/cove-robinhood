@@ -135,7 +135,7 @@ export const FactoHero: React.FC = () => {
   // Hatch companion for connected user
   const handleHatch = async () => {
     const addr = walletAddress || (typeof window !== "undefined" ? localStorage.getItem("cove_wallet_address") : null);
-    const handle = (typeof window !== "undefined" ? localStorage.getItem("cove_user_handle") : null) || (addr ? `@${addr.substring(0, 6)}` : "@sherwood_hero");
+    const handle = addr ? formatAddress(addr) : "@sherwood_hero";
 
     setHatchLoading(true);
     sounds.playBlip();

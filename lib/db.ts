@@ -129,17 +129,22 @@ export async function dbCreateCompanion(
   ownerHandle: string,
   ownerAddress?: string
 ): Promise<Companion> {
-  const cleanHandle = ownerHandle.startsWith("@") ? ownerHandle : `@${ownerHandle}`;
   const address = ownerAddress || "";
+  const formattedAddr = address && address.length > 10
+    ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}`
+    : address;
+  const cleanHandle = ownerHandle && !ownerHandle.startsWith("@mock")
+    ? ownerHandle
+    : (formattedAddr || "@sherwood_hero");
 
   // Check if companion already exists for this handle or wallet address
   // This guarantees user NEVER loses their existing pet on re-hatching!
   const existing =
-    (await dbGetCompanion(cleanHandle)) ||
-    (address ? await dbGetCompanion(address) : null);
+    (address ? await findCompanionRow(address) : null) ||
+    (cleanHandle ? await findCompanionRow(cleanHandle) : null);
 
   if (existing) {
-    return existing;
+    return rowToCompanion(existing);
   }
 
   // Each NEW user gets a RANDOM companion from the canonical roster!
