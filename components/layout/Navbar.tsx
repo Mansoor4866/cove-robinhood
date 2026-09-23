@@ -140,6 +140,17 @@ export const Navbar: React.FC = () => {
         {/* Mobile Dropdown */}
         {mobileOpen && (
           <div className="md:hidden mt-2 p-4 bg-white/95 backdrop-blur-xl border border-black/10 rounded-2xl shadow-xl space-y-3 font-medium text-sm text-[#0d0e11]">
+            {/* Mobile brand header with icon-only logo (LOGO-03) */}
+            <div className="flex items-center gap-2 pb-3 border-b border-black/8 mb-1">
+              <Image
+                src="/cove-icon-light.jpg"
+                alt="Cove"
+                height={28}
+                width={28}
+                className="h-7 w-7 object-contain rounded-md"
+              />
+              <span className="font-mono text-xs uppercase tracking-widest text-[#0d0e11]/50 font-semibold">Cove Protocol</span>
+            </div>
             <Link
               href="/"
               onClick={() => setMobileOpen(false)}
