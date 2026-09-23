@@ -1,75 +1,95 @@
+import { createClient } from "@supabase/supabase-js";
 import { Companion } from "@/types/companion";
 import { CANONICAL_ROSTER, MOCK_LEADERBOARD } from "@/data/companions";
 
 // ==========================================================
-// 🛡️ High-Performance In-Memory DB Store (Zero Crash Guaranteed)
+// 🛡️ Supabase Client (Server-side only — uses service role key)
 // ==========================================================
-class MemoryDatabase {
-  private companions: Map<string, Companion> = new Map();
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-  constructor() {
-    MOCK_LEADERBOARD.forEach((comp) => {
-      this.companions.set(comp.ownerHandle.toLowerCase(), comp);
-    });
-  }
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-  async getCompanionByHandle(handle: string): Promise<Companion | null> {
-    const key = handle.toLowerCase();
-    return this.companions.get(key) || null;
-  }
-
-  async saveCompanion(companion: Companion): Promise<Companion> {
-    const key = companion.ownerHandle.toLowerCase();
-    this.companions.set(key, companion);
-    return companion;
-  }
-
-  async feedCompanion(
-    handle: string,
-    expGain: number = 15
-  ): Promise<{ success: boolean; companion?: Companion; error?: string }> {
-    const key = handle.toLowerCase();
-    const companion = this.companions.get(key);
-
-    if (!companion) {
-      return { success: false, error: "Companion not found" };
-    }
-
-    const newExp = companion.exp + expGain;
-    const isLevelUp = newExp >= companion.maxExp;
-
-    const updated: Companion = {
-      ...companion,
-      hunger: 0,
-      exp: isLevelUp ? newExp - companion.maxExp : newExp,
-      level: isLevelUp ? companion.level + 1 : companion.level,
-      happiness: Math.min(100, companion.happiness + 10),
-      lastFedAt: new Date().toISOString(),
-    };
-
-    this.companions.set(key, updated);
-    return { success: true, companion: updated };
-  }
-
-  async getLeaderboard(limit: number = 50): Promise<Companion[]> {
-    const all = Array.from(this.companions.values());
-    return all
-      .sort((a, b) => b.level - a.level || b.exp - a.exp)
-      .slice(0, limit);
-  }
+// ==========================================================
+// 🔄 Row <-> Companion mappers (snake_case DB ↔ camelCase TS)
+// ==========================================================
+function rowToCompanion(row: any): Companion {
+  return {
+    id: row.id,
+    name: row.name,
+    species: row.species,
+    role: row.role,
+    description: row.description ?? "",
+    quote: row.quote ?? "",
+    primeStat: row.prime_stat ?? "",
+    level: row.level,
+    exp: row.exp,
+    maxExp: row.max_exp ?? 100,
+    hunger: row.hunger ?? 0,
+    maxHunger: 100,
+    happiness: row.happiness ?? 100,
+    health: row.health ?? 100,
+    energy: row.energy ?? 100,
+    hatchedAt: row.hatched_at,
+    lastFedAt: row.last_fed_at,
+    ownerHandle: row.owner_handle,
+    ownerAddress: row.owner_address ?? "",
+    avatarIcon: row.avatar_icon ?? "🦊",
+    badge: row.badge ?? "🌿",
+    rarity: row.rarity ?? "Common",
+  };
 }
 
-const memoryDb = new MemoryDatabase();
+function companionToRow(c: Companion) {
+  return {
+    name: c.name,
+    species: c.species,
+    role: c.role,
+    description: c.description,
+    quote: c.quote,
+    prime_stat: c.primeStat,
+    level: c.level,
+    exp: c.exp,
+    max_exp: c.maxExp,
+    hunger: c.hunger,
+    happiness: c.happiness,
+    health: c.health,
+    energy: c.energy,
+    hatched_at: c.hatchedAt,
+    last_fed_at: c.lastFedAt ?? new Date().toISOString(),
+    owner_handle: c.ownerHandle,
+    owner_address: c.ownerAddress ?? "",
+    avatar_icon: c.avatarIcon,
+    badge: c.badge,
+    rarity: c.rarity,
+  };
+}
 
 // ==========================================================
 // 🚀 Unified Database Operations
 // ==========================================================
 
+/**
+ * Get companion by Twitter/X handle
+ */
 export async function dbGetCompanion(handle: string): Promise<Companion | null> {
   const cleanHandle = handle.startsWith("@") ? handle : `@${handle}`;
-  return memoryDb.getCompanionByHandle(cleanHandle);
+
+  const { data, error } = await supabase
+    .from("companions")
+    .select("*")
+    .ilike("owner_handle", cleanHandle)
+    .single();
+
+  if (error || !data) return null;
+  return rowToCompanion(data);
 }
 
+/**
+ * Create a new companion (random archetype from CANONICAL_ROSTER)
+ */
 export async function dbCreateCompanion(
   ownerHandle: string,
   ownerAddress?: string
@@ -79,7 +99,7 @@ export async function dbCreateCompanion(
 
   const newCompanion: Companion = {
     ...randomBase,
-    id: `comp-${Math.floor(Math.random() * 90000 + 10000)}`,
+    id: crypto.randomUUID(),
     level: 1,
     exp: 10,
     hunger: 0,
@@ -92,21 +112,67 @@ export async function dbCreateCompanion(
     ownerAddress: ownerAddress || "0x0000...0000",
   };
 
-  return memoryDb.saveCompanion(newCompanion);
+  const { data, error } = await supabase
+    .from("companions")
+    .insert(companionToRow(newCompanion))
+    .select()
+    .single();
+
+  if (error) {
+    console.error("dbCreateCompanion error:", error.message);
+    // Fallback: return the in-memory object if DB insert fails
+    return newCompanion;
+  }
+
+  return rowToCompanion(data);
 }
 
+/**
+ * Feed companion (+EXP, level up logic, hunger reset)
+ */
 export async function dbFeedCompanion(
   ownerHandle: string,
   foodName: string
 ): Promise<{ success: boolean; companion?: Companion; reaction?: string; error?: string }> {
   const cleanHandle = ownerHandle.startsWith("@") ? ownerHandle : `@${ownerHandle}`;
-  const result = await memoryDb.feedCompanion(cleanHandle, 15);
 
-  if (!result.success || !result.companion) {
-    return { success: false, error: result.error };
+  // 1. Fetch current companion
+  const { data: existing, error: fetchErr } = await supabase
+    .from("companions")
+    .select("*")
+    .ilike("owner_handle", cleanHandle)
+    .single();
+
+  if (fetchErr || !existing) {
+    return { success: false, error: "Companion not found" };
   }
 
-  const companion = result.companion;
+  // 2. Calculate new stats
+  const expGain = 15;
+  const newExp = existing.exp + expGain;
+  const isLevelUp = newExp >= existing.max_exp;
+
+  const updates = {
+    hunger: 0,
+    exp: isLevelUp ? newExp - existing.max_exp : newExp,
+    level: isLevelUp ? existing.level + 1 : existing.level,
+    happiness: Math.min(100, existing.happiness + 10),
+    last_fed_at: new Date().toISOString(),
+  };
+
+  // 3. Update in Supabase
+  const { data: updated, error: updateErr } = await supabase
+    .from("companions")
+    .update(updates)
+    .ilike("owner_handle", cleanHandle)
+    .select()
+    .single();
+
+  if (updateErr || !updated) {
+    return { success: false, error: "Failed to update companion" };
+  }
+
+  const companion = rowToCompanion(updated);
   const reactions = [
     `savoring every bite of ${foodName}, paws glowing softly!`,
     `crunching on ${foodName}, energy refilled and tail wagging!`,
@@ -117,6 +183,22 @@ export async function dbFeedCompanion(
   return { success: true, companion, reaction };
 }
 
+/**
+ * Get leaderboard — sorted by level desc, exp desc
+ */
 export async function dbGetLeaderboard(limit: number = 50): Promise<Companion[]> {
-  return memoryDb.getLeaderboard(limit);
+  const { data, error } = await supabase
+    .from("companions")
+    .select("*")
+    .order("level", { ascending: false })
+    .order("exp", { ascending: false })
+    .limit(limit);
+
+  if (error || !data) {
+    // Fallback to mock data if DB is unavailable
+    console.warn("dbGetLeaderboard fallback to mock:", error?.message);
+    return MOCK_LEADERBOARD.slice(0, limit);
+  }
+
+  return data.map(rowToCompanion);
 }
