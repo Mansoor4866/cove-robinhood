@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Check, ArrowRight, RefreshCw, Wallet, Sparkles } from "lucide-react";
+import { X, Check, ArrowRight, Wallet, Sparkles } from "lucide-react";
 import { authenticateWithWallet, formatAddress } from "@/lib/web3";
 
 interface HatchGuideModalProps {
@@ -19,25 +19,20 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
   const [timeLeft, setTimeLeft] = useState("09:11:42");
 
   // Connect States for Step 4
-  const [twitterHandle, setTwitterHandle] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
   const [isConnecting, setIsConnecting] = useState(false);
-  const [connectSuccess, setConnectSuccess] = useState(false);
-  const [activeConnectMode, setActiveConnectMode] = useState<"choose" | "x_input" | "wallet_select">("choose");
+  const [activeConnectMode, setActiveConnectMode] = useState<"choose" | "wallet_select">("choose");
 
   useEffect(() => {
     if (isOpen) {
       setCurrentStep(0);
       setActiveConnectMode("choose");
-      const savedHandle = localStorage.getItem("cove_user_handle") || "";
       const savedAddress = localStorage.getItem("cove_wallet_address") || "";
-      setTwitterHandle(savedHandle);
       setWalletAddress(savedAddress);
-      setConnectSuccess(Boolean(savedHandle || savedAddress));
     }
   }, [isOpen]);
 
-  // Countdown timer simulation
+  // Countdown timer simulation for Genesis Snapshot
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
@@ -65,27 +60,12 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
     }
   };
 
-  const handleSaveTwitter = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!twitterHandle.trim()) return;
-    const cleanHandle = twitterHandle.startsWith("@") ? twitterHandle : `@${twitterHandle}`;
-    setIsConnecting(true);
-    setTimeout(() => {
-      localStorage.setItem("cove_user_handle", cleanHandle);
-      setTwitterHandle(cleanHandle);
-      setIsConnecting(false);
-      setConnectSuccess(true);
-      setActiveConnectMode("choose");
-      if (onConnected) {
-        onConnected({ handle: cleanHandle, address: walletAddress || "0x742d...44e" });
-      }
-    }, 600);
-  };
-
   const handleConnectWallet = async (walletType: string) => {
     setIsConnecting(true);
     const walletId = walletType.toLowerCase().includes("robinhood")
       ? "robinhood"
+      : walletType.toLowerCase().includes("phantom")
+      ? "phantom"
       : walletType.toLowerCase().includes("meta")
       ? "metamask"
       : "walletconnect";
@@ -93,13 +73,9 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
     try {
       const session = await authenticateWithWallet(walletId);
       setWalletAddress(session.address);
-      const handle = twitterHandle || "@sherwood_hero";
-      localStorage.setItem("cove_user_handle", handle);
-      setTwitterHandle(handle);
-      setConnectSuccess(true);
       setActiveConnectMode("choose");
       if (onConnected) {
-        onConnected({ handle, address: session.address });
+        onConnected({ handle: formatAddress(session.address), address: session.address });
       }
     } catch (err) {
       console.error("Guide modal wallet sign error:", err);
@@ -137,21 +113,21 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
             </div>
           )}
 
-          {/* Step 1: Go to 𝕏 */}
+          {/* Step 1: Connect Wallet */}
           {currentStep === 1 && (
             <div className="space-y-3 animate-fade-in">
-              <div className="text-5xl select-none mb-2 drop-shadow-[0_0_15px_#00FF87]">🐣</div>
+              <div className="text-5xl select-none mb-2 drop-shadow-[0_0_15px_#00FF87]">🏹</div>
               <h3 className="font-display font-extrabold text-2xl text-white">
-                Step 1: Go to 𝕏 Timeline
+                Step 1: Connect Your Wallet
               </h3>
               <p className="text-white/60 text-sm max-w-xs mx-auto leading-relaxed">
-                Click continue at the end of this guide to open our official protocol profile{" "}
-                <span className="font-bold text-[#00FF87]">@Covepets</span>.
+                Connect your Robinhood, Phantom, or MetaMask EVM wallet. Transactions are{" "}
+                <span className="font-bold text-[#00FF87]">zero-gas</span> and settled instantly on Robinhood Layer-2.
               </p>
             </div>
           )}
 
-          {/* Step 2: Crack Your Egg */}
+          {/* Step 2: Crack & Hatch Your Egg */}
           {currentStep === 2 && (
             <div className="space-y-3 animate-fade-in">
               <div className="text-5xl select-none mb-2 drop-shadow-[0_0_15px_#00FF87]">⚡</div>
@@ -159,131 +135,97 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
                 Step 2: Crack Your Egg
               </h3>
               <p className="text-white/60 text-sm max-w-xs mx-auto leading-relaxed">
-                Every time you tag{" "}
-                <span className="font-bold text-[#00FF87]">@Covepets</span> on X, your egg
-                cracks and your Cove companion begins to evolve!
+                Hatch your Mystic Egg to reveal 1 of 10 canonical Sherwood companions with distinct stats, combat roles, and on-chain DNA!
               </p>
             </div>
           )}
 
-          {/* Step 3: Feed & Care */}
+          {/* Step 3: Feed & Train */}
           {currentStep === 3 && (
             <div className="space-y-2.5 animate-fade-in">
-              <div className="text-4xl select-none mb-1">🍎</div>
+              <div className="text-4xl select-none mb-1">🍓</div>
               <h3 className="font-display font-extrabold text-2xl text-white">
-                Step 3: Feed & Train
+                Step 3: Feed & Spar in Sanctuary
               </h3>
               <p className="text-white/60 text-xs max-w-xs mx-auto leading-relaxed">
-                Feed or command your companion on X using natural language! Try tweeting:
+                Spend Food Tokens to gain EXP, pet your companion for Happiness, and enter tactical spars to climb the ranks!
               </p>
               <div className="bg-[#050B07] border border-[#00FF87]/30 rounded-xl py-2 px-3.5 font-mono text-xs text-[#00FF87] max-w-xs mx-auto">
-                &quot;@Covepets feed my pet wild honey berries&quot;
+                &quot;Daily logins grant +2 Food Tokens and restore Mana automatically.&quot;
               </div>
             </div>
           )}
 
-          {/* Step 4: Claim Airdrop / Connect Wallet / Connect 𝕏 */}
+          {/* Step 4: Compete & Claim */}
           {currentStep === 4 && (
             <div className="space-y-3 animate-fade-in w-full">
               <div className="text-3xl select-none">🏆</div>
               <h3 className="font-display font-extrabold text-xl text-white">
-                Step 4: Connect & Claim
+                Step 4: Compete & Earn $COVE
               </h3>
               <p className="text-white/60 text-xs max-w-xs mx-auto leading-relaxed">
-                Raise your pet to enter the Top 3 Leaderboard and claim your share of the{" "}
-                <span className="font-bold text-[#00FF87]">10,000 $COVE</span> reward pool!
+                Level up your companion on the Sherwood Leaderboard to qualify for the{" "}
+                <span className="font-bold text-[#00FF87]">$COVE Token Airdrop</span> & Whitelist tiers!
               </p>
               <div className="font-mono text-[11px] text-[#00FF87] font-bold">
-                Time Remaining: {timeLeft}
+                Snapshot Countdown: {timeLeft}
               </div>
 
-              {/* Mode: Default Choose */}
+              {/* Mode: Default Choose / Verified Status */}
               {activeConnectMode === "choose" && (
                 <div className="space-y-2 pt-1 w-full max-w-xs mx-auto font-mono text-xs">
-                  {connectSuccess && (
-                    <div className="bg-[#00FF87]/15 border border-[#00FF87]/30 text-[#00FF87] px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1.5">
-                      <Check className="w-3.5 h-3.5" />
-                      <span>Linked: {twitterHandle || walletAddress}</span>
+                  {walletAddress ? (
+                    <div className="bg-[#00FF87]/15 border border-[#00FF87]/30 text-[#00FF87] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
+                      <Check className="w-4 h-4 text-[#00FF87]" />
+                      <span>Verified Trainer: {formatAddress(walletAddress)}</span>
                     </div>
-                  )}
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => setActiveConnectMode("x_input")}
-                      className="btn-glass py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1.5"
-                    >
-                      <span>𝕏 Handle</span>
-                      {twitterHandle && <Check className="w-3 h-3 text-[#00FF87]" />}
-                    </button>
-
+                  ) : (
                     <button
                       onClick={() => setActiveConnectMode("wallet_select")}
-                      className="btn-neon py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1.5"
+                      className="w-full btn-neon py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 font-mono text-xs font-bold shadow-md"
                     >
-                      <Wallet className="w-3.5 h-3.5" />
-                      <span>Wallet</span>
-                      {walletAddress && <Check className="w-3 h-3 text-[#050B07]" />}
+                      <Wallet className="w-4 h-4" />
+                      <span>Connect Wallet Now</span>
                     </button>
-                  </div>
+                  )}
                 </div>
-              )}
-
-              {/* Mode: 𝕏 Handle Input Form */}
-              {activeConnectMode === "x_input" && (
-                <form onSubmit={handleSaveTwitter} className="space-y-2 max-w-xs mx-auto w-full pt-1">
-                  <input
-                    type="text"
-                    placeholder="@your_username"
-                    value={twitterHandle}
-                    onChange={(e) => setTwitterHandle(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-[#00FF87]/30 bg-[#050B07] font-mono text-xs text-white focus:outline-none focus:border-[#00FF87]"
-                    autoFocus
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setActiveConnectMode("choose")}
-                      className="w-1/3 py-2 btn-glass rounded-xl text-xs font-mono"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isConnecting || !twitterHandle.trim()}
-                      className="flex-1 btn-neon font-display font-bold py-2 rounded-xl text-xs transition disabled:opacity-50"
-                    >
-                      {isConnecting ? "Linking..." : "Save Handle"}
-                    </button>
-                  </div>
-                </form>
               )}
 
               {/* Mode: Wallet Select Modal */}
               {activeConnectMode === "wallet_select" && (
-                <div className="space-y-1.5 max-w-xs mx-auto w-full pt-1 font-mono text-xs">
+                <div className="space-y-2 max-w-xs mx-auto w-full pt-1 font-mono text-xs">
                   <button
                     onClick={() => handleConnectWallet("Robinhood Wallet")}
                     disabled={isConnecting}
-                    className="w-full py-2 px-3 rounded-lg border border-white/10 bg-[#050B07] hover:border-[#00FF87]/40 text-left flex items-center justify-between text-white transition"
+                    className="w-full py-2.5 px-3.5 rounded-xl border border-white/10 bg-[#050B07] hover:border-[#00FF87]/40 text-left flex items-center justify-between text-white transition"
                   >
                     <span>🏹 Robinhood Wallet</span>
-                    <span className="text-[9px] text-[#00FF87] font-bold">Connect</span>
+                    <span className="text-[10px] text-[#00FF87] font-bold">Connect</span>
                   </button>
 
                   <button
                     onClick={() => handleConnectWallet("Phantom")}
                     disabled={isConnecting}
-                    className="w-full py-2 px-3 rounded-lg border border-white/10 bg-[#050B07] hover:border-[#00FF87]/40 text-left flex items-center justify-between text-white transition"
+                    className="w-full py-2.5 px-3.5 rounded-xl border border-white/10 bg-[#050B07] hover:border-[#00FF87]/40 text-left flex items-center justify-between text-white transition"
                   >
                     <span>👻 Phantom</span>
-                    <span className="text-[9px] text-[#00FF87] font-bold">Connect</span>
+                    <span className="text-[10px] text-[#00FF87] font-bold">Connect</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleConnectWallet("MetaMask")}
+                    disabled={isConnecting}
+                    className="w-full py-2.5 px-3.5 rounded-xl border border-white/10 bg-[#050B07] hover:border-[#00FF87]/40 text-left flex items-center justify-between text-white transition"
+                  >
+                    <span>🦊 MetaMask</span>
+                    <span className="text-[10px] text-[#00FF87] font-bold">Connect</span>
                   </button>
 
                   <button
                     onClick={() => setActiveConnectMode("choose")}
                     className="text-[10px] text-white/40 hover:text-white pt-1 block mx-auto underline"
                   >
-                    Back to options
+                    Back to status
                   </button>
                 </div>
               )}
@@ -353,7 +295,7 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
               onClick={onClose}
               className="w-full btn-neon font-display font-bold text-xs py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(0,255,135,0.4)]"
             >
-              <span>{connectSuccess ? "Continue to Sanctuary →" : "Continue to 𝕏 →"}</span>
+              <span>Continue to Sanctuary →</span>
             </button>
           )}
         </div>
