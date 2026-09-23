@@ -4,18 +4,22 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { CANONICAL_ROSTER, MOCK_LEADERBOARD } from "@/data/companions";
 import { Companion } from "@/types/companion";
-import { Trophy, Sparkles, Shield, ArrowRight, Flame } from "lucide-react";
+import { Trophy, Sparkles, Shield, ArrowRight, Flame, ChevronDown } from "lucide-react";
 import { BiWeeklyRewardTracker } from "@/components/leaderboard/BiWeeklyRewardTracker";
+
+const PAGE_SIZE = 50;
+const MAX_LEADERBOARD_CAP = 1000;
 
 export default function LeaderboardPage() {
   const [filterRarity, setFilterRarity] = useState<string>("ALL");
+  const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
   const [companions, setCompanions] = useState<Companion[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadLeaderboard() {
       try {
-        const res = await fetch("/api/leaderboard?limit=50");
+        const res = await fetch("/api/leaderboard?limit=1000");
         const data = await res.json();
         if (data.success && Array.isArray(data.leaderboard) && data.leaderboard.length > 0) {
           setCompanions(data.leaderboard);
@@ -52,11 +56,19 @@ export default function LeaderboardPage() {
     loadLeaderboard();
   }, []);
 
-  const fullLeaderboard = companions;
+  // Cap total eligible users at 1,000 max
+  const fullLeaderboard = companions.slice(0, MAX_LEADERBOARD_CAP);
 
   const filtered = fullLeaderboard.filter((item) => {
     return filterRarity === "ALL" || item.rarity === filterRarity;
   });
+
+  const displayed = filtered.slice(0, visibleCount);
+  const canLoadMore = visibleCount < filtered.length && visibleCount < MAX_LEADERBOARD_CAP;
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, MAX_LEADERBOARD_CAP, filtered.length));
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
@@ -80,7 +92,10 @@ export default function LeaderboardPage() {
           {["ALL", "LEGENDARY", "MYTHIC", "RARE"].map((r) => (
             <button
               key={r}
-              onClick={() => setFilterRarity(r)}
+              onClick={() => {
+                setFilterRarity(r);
+                setVisibleCount(PAGE_SIZE);
+              }}
               className={`px-3 py-1.5 rounded-lg transition ${
                 filterRarity === r
                   ? "bg-white text-[#0d0e11] font-bold shadow-sm"
@@ -171,76 +186,111 @@ export default function LeaderboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#0d0e11]/5 font-sans text-sm">
-              {filtered.map((entry, index) => (
-                <tr key={entry.id} className="hover:bg-[#f4f4f4]/60 transition">
-                  <td className="py-4 px-6 font-mono font-bold">
-                    {index === 0 ? "🥇 #1" : index === 1 ? "🥈 #2" : index === 2 ? "🥉 #3" : `#${index + 1}`}
-                  </td>
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-[#0d0e11]/10 shrink-0">
-                        {entry.image ? (
-                          <Image
-                            src={entry.image}
-                            alt={entry.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <span className="text-2xl flex items-center justify-center w-full h-full bg-[#f4f4f4]">
-                            {entry.avatarIcon}
-                          </span>
-                        )}
-                      </div>
-                      <div>
-                        <span className="font-display font-bold text-[#0d0e11]">
-                          {entry.name}
-                        </span>
-                        <span className="ml-2 text-xs">{entry.badge}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 font-mono text-xs">
-                    <a
-                      href={`https://x.com/${entry.ownerHandle.replace("@", "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#0053ff] hover:underline font-semibold"
-                    >
-                      {entry.ownerHandle}
-                    </a>
-                  </td>
-                  <td className="py-4 px-6 text-xs text-[#0d0e11]/70">{entry.role}</td>
-                  <td className="py-4 px-6 font-mono font-bold text-[#0d0e11]">
-                    LVL {entry.level}
-                  </td>
-                  <td className="py-4 px-6 font-mono text-xs text-[#0d0e11]/60">
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 bg-[#0d0e11]/10 h-1.5 rounded-full overflow-hidden">
-                        <div
-                          className="bg-[#58e78f] h-full rounded-full"
-                          style={{ width: `${entry.exp}%` }}
-                        ></div>
-                      </div>
-                      <span>{entry.exp}/100</span>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 font-mono font-bold text-xs text-[#f59e0b]">
-                    {((entry.weeklyScore && entry.weeklyScore > 0)
-                      ? entry.weeklyScore
-                      : entry.level * 1000 + entry.exp * 10 + (entry.sparWins || 0) * 25 + (entry.daysActive || 1) * 50
-                    ).toLocaleString()}{" "}
-                    pts
-                  </td>
-                  <td className="py-4 px-6 text-right">
-                    <span className="font-mono text-[9px] uppercase px-2.5 py-1 rounded bg-[#0d0e11] text-white font-bold">
-                      {entry.rarity}
-                    </span>
+              {displayed.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-12 text-center text-xs font-mono text-[#0d0e11]/50">
+                    No companions found for &quot;{filterRarity}&quot; tier in current snapshot.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                displayed.map((entry, index) => (
+                  <tr key={entry.id} className="hover:bg-[#f4f4f4]/60 transition">
+                    <td className="py-4 px-6 font-mono font-bold">
+                      {index === 0 ? "🥇 #1" : index === 1 ? "🥈 #2" : index === 2 ? "🥉 #3" : `#${index + 1}`}
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-[#0d0e11]/10 shrink-0">
+                          {entry.image ? (
+                            <Image
+                              src={entry.image}
+                              alt={entry.name}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <span className="text-2xl flex items-center justify-center w-full h-full bg-[#f4f4f4]">
+                              {entry.avatarIcon}
+                            </span>
+                          )}
+                        </div>
+                        <div>
+                          <span className="font-display font-bold text-[#0d0e11]">
+                            {entry.name}
+                          </span>
+                          <span className="ml-2 text-xs">{entry.badge}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-4 px-6 font-mono text-xs">
+                      <a
+                        href={`https://x.com/${entry.ownerHandle.replace("@", "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#0053ff] hover:underline font-semibold"
+                      >
+                        {entry.ownerHandle}
+                      </a>
+                    </td>
+                    <td className="py-4 px-6 text-xs text-[#0d0e11]/70">{entry.role}</td>
+                    <td className="py-4 px-6 font-mono font-bold text-[#0d0e11]">
+                      LVL {entry.level}
+                    </td>
+                    <td className="py-4 px-6 font-mono text-xs text-[#0d0e11]/60">
+                      <div className="flex items-center gap-2">
+                        <div className="w-24 bg-[#0d0e11]/10 h-1.5 rounded-full overflow-hidden">
+                          <div
+                            className="bg-[#58e78f] h-full rounded-full"
+                            style={{ width: `${entry.exp}%` }}
+                          ></div>
+                        </div>
+                        <span>{entry.exp}/100</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-6 font-mono font-bold text-xs text-[#f59e0b]">
+                      {((entry.weeklyScore && entry.weeklyScore > 0)
+                        ? entry.weeklyScore
+                        : entry.level * 1000 + entry.exp * 10 + (entry.sparWins || 0) * 25 + (entry.daysActive || 1) * 50
+                      ).toLocaleString()}{" "}
+                      pts
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      <span className="font-mono text-[9px] uppercase px-2.5 py-1 rounded bg-[#0d0e11] text-white font-bold">
+                        {entry.rarity}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination & Load More Controls (Max 1,000 Cap) */}
+        <div className="p-4 bg-[#fbfbfb] border-t border-[#0d0e11]/10 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs">
+          <div className="text-[#0d0e11]/60">
+            Showing <span className="font-bold text-[#0d0e11]">{displayed.length}</span> of{" "}
+            <span className="font-bold text-[#0d0e11]">{Math.min(filtered.length, MAX_LEADERBOARD_CAP)}</span> trainers{" "}
+            <span className="text-[#0d0e11]/40">(Top 1,000 Genesis Cap)</span>
+          </div>
+
+          {canLoadMore ? (
+            <button
+              onClick={handleLoadMore}
+              className="px-5 py-2.5 rounded-xl bg-[#0d0e11] hover:bg-[#0d0e11]/85 text-white font-bold transition active:scale-95 shadow-sm inline-flex items-center gap-2"
+            >
+              <span>Load More (+50 Trainers)</span>
+              <ChevronDown className="w-3.5 h-3.5 text-[#58e78f]" />
+            </button>
+          ) : (
+            <div className="text-[#0d0e11]/50 text-xs italic">
+              {filtered.length >= MAX_LEADERBOARD_CAP
+                ? "🏆 Maximum 1,000 trainers reached for Genesis Season 01 Snapshot."
+                : filtered.length > 0
+                ? "All active snapshot trainers loaded."
+                : ""}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -4,7 +4,8 @@ import { dbGetLeaderboard } from "@/lib/db";
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get("limit") || "50", 10);
+    const limitParam = parseInt(searchParams.get("limit") || "1000", 10);
+    const limit = Math.min(1000, Math.max(1, isNaN(limitParam) ? 1000 : limitParam));
 
     const leaderboard = await dbGetLeaderboard(limit);
 
