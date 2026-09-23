@@ -378,13 +378,6 @@ export const FactoHero: React.FC = () => {
             <div className="absolute -inset-4 bg-gradient-to-tr from-[#f243ac]/10 via-[#58e78f]/10 to-transparent rounded-3xl blur-2xl pointer-events-none"></div>
 
             <div className="facto-dark-card p-6 sm:p-7 relative overflow-hidden flex flex-col gap-5">
-              {/* Toast */}
-              {toast && (
-                <div className={`absolute top-4 left-1/2 -translate-x-1/2 z-50 ${toastColor} font-display font-bold text-xs px-4 py-2 rounded-full shadow-lg animate-bounce whitespace-nowrap`}>
-                  {toast.msg}
-                </div>
-              )}
-
               {/* Card Header */}
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div className="flex items-center gap-2.5">
@@ -397,6 +390,13 @@ export const FactoHero: React.FC = () => {
                   LVL {level}
                 </span>
               </div>
+
+              {/* Toast Alert Banner */}
+              {toast && (
+                <div className={`${toastColor} font-display font-bold text-xs px-4 py-2.5 rounded-xl shadow-lg flex items-center justify-center text-center animate-in fade-in`}>
+                  <span>{toast.msg}</span>
+                </div>
+              )}
 
               {/* Character Stage */}
               <div className="relative py-6 flex flex-col items-center justify-center bg-white/[0.03] border border-white/5 rounded-2xl overflow-hidden">
