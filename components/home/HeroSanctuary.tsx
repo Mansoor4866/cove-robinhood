@@ -93,7 +93,7 @@ export const HeroSanctuary: React.FC<HeroSanctuaryProps> = ({ onSearchUser }) =>
         setLevel(1);
         setExp(25);
         setMorale(50);
-        triggerToast("🎉 Egg Hatched! Robin Fox materialized on Robinhood Chain!");
+        triggerToast("🎉 Egg Hatched! Robin Fox materialized on Solana!");
       }, 700);
     } else {
       sounds.playCrack();
@@ -156,7 +156,7 @@ export const HeroSanctuary: React.FC<HeroSanctuaryProps> = ({ onSearchUser }) =>
           <div className="inline-flex items-center gap-3 bg-[#0A140E]/90 border border-[#00FF87]/25 rounded-full px-4 py-1.5 mb-6 shadow-[0_0_20px_rgba(0,255,135,0.1)]">
             <span className="beacon-dot"></span>
             <span className="font-mono text-xs uppercase tracking-widest text-[#00FF87] font-bold">
-              Sherwood Autonomous AI Matrix · Robinhood L2
+              Sherwood Autonomous AI Matrix · Solana High TPS
             </span>
             <button
               onClick={handleToggleMute}
@@ -175,7 +175,7 @@ export const HeroSanctuary: React.FC<HeroSanctuaryProps> = ({ onSearchUser }) =>
 
           {/* Subtitle */}
           <p className="text-[#8E9E94] text-lg lg:text-xl max-w-xl mb-8 leading-relaxed font-sans font-light">
-            Cove turns autonomous pixel companions into living, evolving on-chain creatures. Care on 𝕏 in natural language, spar in Sherwood Forest, and claim weekly rewards on <span className="text-white font-medium">Robinhood Chain</span>.
+            Cove turns autonomous pixel companions into living, evolving on-chain creatures. Care on 𝕏 in natural language, spar in Sherwood Forest, and claim weekly rewards on <span className="text-white font-medium">Solana</span>.
           </p>
 
           {/* Action CTAs */}
@@ -207,16 +207,16 @@ export const HeroSanctuary: React.FC<HeroSanctuaryProps> = ({ onSearchUser }) =>
             </div>
           )}
 
-          {/* Verified Robinhood Contract Pill */}
+          {/* Verified Solana Program Pill */}
           <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-white/60 mb-8 pb-6 border-b border-white/5 w-full">
             <div className="flex items-center gap-1.5 text-[#00FF87]">
               <Shield className="w-4 h-4" />
-              <span className="font-bold">Robinhood EVM L2 Verified</span>
+              <span className="font-bold">Solana Program Verified</span>
             </div>
             <span className="text-white/20">|</span>
-            <span className="text-white/50">Contract: 0x742d...44e9</span>
+            <span className="text-white/50">Program: CoveComp...111</span>
             <span className="text-white/20">|</span>
-            <span className="text-white/70">Sponsored Zero Gas</span>
+            <span className="text-white/70">Sub-Cent Fast Txns</span>
           </div>
 
           {/* 3 Metric Stat Pillars */}
@@ -435,7 +435,7 @@ export const HeroSanctuary: React.FC<HeroSanctuaryProps> = ({ onSearchUser }) =>
             {mode === "incubator" && (
               <div className="space-y-5 py-4 text-center animate-fade-in font-mono">
                 <div className="text-xs text-white/60">
-                  Click the egg 3 times to crack the shell on Robinhood Chain:
+                  Click the egg 3 times to crack the shell on Solana:
                 </div>
 
                 <div className="relative py-8 flex flex-col items-center justify-center">

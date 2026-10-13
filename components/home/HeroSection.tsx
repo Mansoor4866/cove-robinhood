@@ -54,7 +54,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onSearchUser }) => {
 
         {/* Subtitle */}
         <p className="text-[#8E9E94] text-lg max-w-lg mb-8 leading-relaxed font-sans font-light">
-          Cove transforms digital creatures into sovereign AI companions on <span className="text-white font-medium">Robinhood Chain</span>. Hatch in Sherwood, care on 𝕏 in natural language, and train your pet with dynamic on-chain DNA.
+          Cove transforms digital creatures into sovereign AI companions on <span className="text-white font-medium">Solana</span>. Hatch in Sherwood, care on 𝕏 in natural language, and train your pet with dynamic on-chain DNA.
         </p>
 
         {/* Action Buttons */}
@@ -96,7 +96,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onSearchUser }) => {
             <div className="text-[10px] text-white/50 uppercase">Speed</div>
             <div className="text-lg font-bold text-white mt-0.5">&lt;0.001s</div>
             <div className="text-[9px] text-[#00FF87] flex items-center gap-1 mt-0.5">
-              <span>Robinhood L2</span>
+              <span>Solana</span>
             </div>
           </div>
 

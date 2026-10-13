@@ -50,7 +50,7 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
     if (typeof window !== "undefined") {
       setWallets(getAvailableWallets());
       const savedAddr = localStorage.getItem("cove_wallet_address");
-      const savedName = localStorage.getItem("cove_wallet_name") || "Robinhood Wallet";
+      const savedName = localStorage.getItem("cove_wallet_name") || "Phantom";
       setActiveAddress(savedAddr);
       setActiveWalletName(savedName);
       setHasHatched(localStorage.getItem("cove_has_hatched") === "true");
@@ -77,8 +77,8 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
         setShowSuccessToast(false);
       }, 3000);
     } catch (err: any) {
-      console.error("Wallet auth error:", err);
-      setErrorMessage(err.message || "Failed to authenticate wallet.");
+      console.error("Solana wallet auth error:", err);
+      setErrorMessage(err.message || "Failed to authenticate with Solana wallet.");
     } finally {
       setIsConnecting(false);
       setConnectingWalletId(null);
@@ -107,17 +107,17 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-[#00FF87]/15">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#00FF87] to-[#059669] p-0.5 shadow-sm">
-              <div className="w-full h-full bg-[#050B07] rounded-[10px] flex items-center justify-center text-sm font-bold text-[#00FF87]">
-                🏹
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#9945FF] to-[#14F195] p-0.5 shadow-sm">
+              <div className="w-full h-full bg-[#050B07] rounded-[10px] flex items-center justify-center text-sm font-bold text-[#14F195]">
+                ⚡
               </div>
             </div>
             <div>
               <h3 className="font-display font-bold text-base text-white leading-none">
-                {activeAddress ? "Connected Sanctuary Account" : "Connect & Authenticate"}
+                {activeAddress ? "Connected Solana Sanctuary" : "Connect Solana Wallet"}
               </h3>
               <p className="font-mono text-[10px] text-[#00FF87]/70 mt-1">
-                Robinhood Chain · Non-Custodial EVM
+                Solana Network · Non-Custodial
               </p>
             </div>
           </div>
@@ -153,15 +153,15 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
               <div className="flex items-center justify-between">
                 <span className="text-white/50 text-[11px]">Provider:</span>
                 <span className="font-bold text-white flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#00FF87] animate-pulse"></span>
-                  {activeWalletName || "Robinhood Wallet"}
+                  <span className="w-2 h-2 rounded-full bg-[#14F195] animate-pulse"></span>
+                  {activeWalletName || "Phantom"}
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-white/50 text-[11px]">Address:</span>
+                <span className="text-white/50 text-[11px]">Solana Address:</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-[#00FF87]">{formatAddress(activeAddress)}</span>
+                  <span className="font-bold text-[#14F195]">{formatAddress(activeAddress)}</span>
                   <button
                     onClick={handleCopy}
                     className="p-1 hover:bg-white/10 rounded text-white/50 hover:text-white transition"
@@ -175,14 +175,14 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
               <div className="flex items-center justify-between">
                 <span className="text-white/50 text-[11px]">Network:</span>
                 <span className="font-bold text-white flex items-center gap-1">
-                  <span className="beacon-dot"></span> Robinhood L2
+                  <span className="beacon-dot"></span> Solana Devnet / Mainnet
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
                 <span className="text-white/50 text-[11px]">Signature:</span>
-                <span className="text-[10px] bg-[#00FF87]/15 text-[#00FF87] font-bold px-2 py-0.5 rounded border border-[#00FF87]/30">
-                  SIWE Cryptographic
+                <span className="text-[10px] bg-[#9945FF]/20 text-[#14F195] font-bold px-2 py-0.5 rounded border border-[#14F195]/30">
+                  SIWS (ed25519)
                 </span>
               </div>
             </div>
@@ -206,7 +206,7 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
                   }}
                   className="w-full bg-[#00FF87] hover:bg-[#00FF87]/90 active:scale-95 text-[#0d0e11] font-display font-bold text-xs py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(0,255,135,0.4)]"
                 >
-                  <span>Hatch Companion →</span>
+                  <span>Hatch Companion on Solana →</span>
                   <Sparkles className="w-3.5 h-3.5 text-[#0d0e11]" />
                 </button>
               )}
@@ -224,7 +224,7 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
           /* Connect Options List */
           <div className="py-4 space-y-3.5">
             <p className="text-xs text-white/60 leading-relaxed font-sans">
-              Choose your wallet to detect and sign the authentication request for **Robinhood Chain**.
+              Choose your Solana wallet to detect and sign authentication for **Solana**.
             </p>
 
             {/* Loading Indicator */}
@@ -236,7 +236,7 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
                 </div>
                 <p className="text-[11px] text-white/80 font-semibold">{statusMessage}</p>
                 <p className="text-[10px] text-white/45">
-                  Please approve the connection & signature prompt in your wallet extension.
+                  Please approve connection & signature prompt in your Solana wallet extension.
                 </p>
               </div>
             )}
@@ -313,9 +313,9 @@ export const WalletAuthModal: React.FC<WalletAuthModalProps> = ({
         {/* Footer */}
         <div className="pt-3 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-white/40">
           <span className="flex items-center gap-1">
-            <ShieldCheck className="w-3 h-3 text-[#00FF87]" /> SIWE Cryptographic Auth
+            <ShieldCheck className="w-3 h-3 text-[#14F195]" /> SIWS (Sign-In with Solana)
           </span>
-          <span>Zero Gas Fees</span>
+          <span>400ms · Sub-Cent Fees</span>
         </div>
       </div>
     </div>

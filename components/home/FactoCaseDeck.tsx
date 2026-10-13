@@ -11,14 +11,14 @@ export const FactoCaseDeck: React.FC = () => {
       id: "01",
       tag: "AI EVOLUTION",
       title: "Autonomous Neural Agent & Combat Training",
-      description: "Each companion possesses an autonomous neural core that dynamically adapts through daily feeding, tactical sparring, and dungeon survival — writing state proofs directly to Robinhood EVM Layer-2 with zero gas fees.",
+      description: "Each companion possesses an autonomous neural core that dynamically adapts through daily feeding, tactical sparring, and dungeon survival — writing state proofs directly to Solana with sub-cent fees.",
       accent: "#f243ac",
       bgGradient: "from-[#f243ac]/10 to-transparent",
-      badge: "Zero-Gas Agent",
+      badge: "Sub-Cent Agent",
       stats: [
         { label: "Execution Latency", value: "< 0.8s" },
         { label: "Intelligence Core", value: "Neural Reinforcement" },
-        { label: "On-Chain Sync", value: "Robinhood EVM" },
+        { label: "On-Chain Sync", value: "Solana Network" },
       ],
       previewType: "agent",
     },
@@ -54,15 +54,15 @@ export const FactoCaseDeck: React.FC = () => {
     },
     {
       id: "04",
-      tag: "ROBINHOOD L2",
-      title: "Native Yield & Instant Settlement",
-      description: "Settled natively on Robinhood Chain with sub-second block times and automated state verification. Backed by institutional-grade EVM rollups.",
+      tag: "SOLANA NETWORK",
+      title: "Native Speed & Instant Finality",
+      description: "Settled natively on Solana with 400ms block times and automated state verification. Backed by high-throughput PoH consensus.",
       accent: "#f59e0b",
       bgGradient: "from-[#f59e0b]/10 to-transparent",
-      badge: "EVM Layer-2",
+      badge: "Solana L1",
       stats: [
-        { label: "Block Time", value: "< 250ms" },
-        { label: "Consensus", value: "Robinhood Rollup" },
+        { label: "Block Time", value: "< 400ms" },
+        { label: "Consensus", value: "Proof of History" },
         { label: "State Verification", value: "Instant" },
       ],
       previewType: "settlement",
@@ -78,7 +78,7 @@ export const FactoCaseDeck: React.FC = () => {
         </span>
         <h2 className="font-display font-medium text-3xl sm:text-5xl text-[#0d0e11] tracking-tight max-w-2xl">
           Engineered for autonomous life <br />
-          on <span className="font-semibold">Robinhood Layer-2</span>.
+          on <span className="font-semibold">Solana</span>.
         </h2>
       </div>
 
@@ -179,7 +179,7 @@ export const FactoCaseDeck: React.FC = () => {
                       </div>
                       <div className="bg-[#58e78f]/10 text-[#58e78f] p-3 rounded-xl border border-[#58e78f]/30 flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 shrink-0" />
-                        <span>AI Execution: Combat round won (+20 EXP). Mana depleted (-15). State hash validated on Robinhood L2.</span>
+                        <span>AI Execution: Combat round won (+20 EXP). Mana depleted (-15). State hash validated on Solana.</span>
                       </div>
                     </div>
                   )}
@@ -208,9 +208,9 @@ export const FactoCaseDeck: React.FC = () => {
                       <div className="text-white/50 text-[11px]">POST /v1/companions/interact</div>
                       <pre className="text-[#58e78f] bg-black/40 p-3 rounded-xl overflow-x-auto text-[11px]">
 {`{
-  "trainer": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+  "trainer": "7xKXtg2Pq9fW8eK2Lmn1248zMnmXpL9Q",
   "action": "FEED_EXPEDITION",
-  "status": "SETTLED_ROBINHOOD_L2",
+  "status": "SETTLED_SOLANA",
   "latencyMs": 11.4
 }`}
                       </pre>
@@ -220,11 +220,11 @@ export const FactoCaseDeck: React.FC = () => {
                   {item.previewType === "settlement" && (
                     <div className="space-y-3">
                       <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                        <span className="text-white/60">EVM State Hash</span>
-                        <span className="text-[#58e78f] font-bold">Confirmed #18,940,211</span>
+                        <span className="text-white/60">Solana Slot &amp; Tx</span>
+                        <span className="text-[#58e78f] font-bold">Confirmed #289,410,211</span>
                       </div>
                       <div className="text-white/80 text-[11px] leading-relaxed">
-                        Transaction validated by Robinhood L2 sequencer with zero gas penalty for registered trainers.
+                        Transaction validated by Solana cluster with sub-cent network fee for registered trainers.
                       </div>
                     </div>
                   )}

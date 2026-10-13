@@ -21,7 +21,7 @@ export const ActiveStatsBanner: React.FC = () => {
             </h3>
           </div>
           <span className="font-mono text-xs text-[#00FF87] bg-[#00FF87]/10 px-3 py-1 rounded-full border border-[#00FF87]/25">
-            ROBINHOOD EVM SYNCHRONIZED
+            SOLANA HIGH TPS SYNCHRONIZED
           </span>
         </div>
 

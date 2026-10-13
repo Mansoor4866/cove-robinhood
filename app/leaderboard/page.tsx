@@ -77,13 +77,13 @@ export default function LeaderboardPage() {
         <div>
           <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#0d0e11]/60 font-semibold mb-3">
             <Trophy className="w-3.5 h-3.5 text-[#f59e0b]" />
-            <span>Robinhood Chain Real-Time Consensus Rankings</span>
+            <span>Solana Real-Time Consensus Rankings</span>
           </div>
           <h1 className="font-display font-medium text-4xl sm:text-5xl text-[#0d0e11] tracking-tight">
             Sherwood Leaderboard
           </h1>
           <p className="text-[#0d0e11]/70 text-sm mt-2 max-w-xl font-sans">
-            Companions ranked by Level, Battle EXP, and on-chain timeline achievements on Robinhood EVM Layer-2.
+            Companions ranked by Level, Battle EXP, and on-chain timeline achievements on Solana.
           </p>
         </div>
 

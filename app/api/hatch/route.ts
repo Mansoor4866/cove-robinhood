@@ -5,18 +5,18 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const walletAddress = body.walletAddress || "";
-    const formattedFromAddr = walletAddress && walletAddress.length > 10
-      ? `${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`
+    const formattedFromAddr = walletAddress && walletAddress.length > 8
+      ? `${walletAddress.substring(0, 4)}...${walletAddress.substring(walletAddress.length - 4)}`
       : walletAddress;
-    const username = body.username || formattedFromAddr || "0x0000...0000";
+    const username = body.username || formattedFromAddr || "SolanaTrainer";
 
     const companion = await dbCreateCompanion(username, walletAddress);
 
     return NextResponse.json({
       success: true,
-      message: `Hatched ${companion.name} (${companion.role}) on Robinhood Chain!`,
+      message: `Hatched ${companion.name} (${companion.role}) on Solana!`,
       companion,
-      txHash: `0x${Math.random().toString(16).substring(2)}${Math.random().toString(16).substring(2)}`,
+      txSignature: `${Math.random().toString(36).substring(2)}${Math.random().toString(36).substring(2)}${Math.random().toString(36).substring(2)}`,
     });
   } catch (error) {
     return NextResponse.json(

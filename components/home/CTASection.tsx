@@ -37,7 +37,7 @@ export const CTASection: React.FC = () => {
             </h2>
 
             <p className="text-[#8E9E94] text-base leading-relaxed font-sans font-light">
-              One tweet on 𝕏 to begin. Zero gas fees on Robinhood Chain. Your companion lives, learns, and battles autonomously.
+              One tweet on 𝕏 to begin. Sub-cent fees on Solana. Your companion lives, learns, and battles autonomously.
             </p>
           </div>
 

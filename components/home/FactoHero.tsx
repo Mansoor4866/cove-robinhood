@@ -160,7 +160,7 @@ export const FactoHero: React.FC = () => {
         setFoodTokens(c.foodTokens ?? 10);
         setHappiness(c.happiness ?? 100);
         sounds.playHatchFanfare();
-        showToast(`🎉 Hatched ${c.name} (${c.role}) on Robinhood Chain!`);
+        showToast(`🎉 Hatched ${c.name} (${c.role}) on Solana!`);
       } else {
         showToast(data.error || "Failed to hatch", "error");
       }
@@ -340,9 +340,9 @@ export const FactoHero: React.FC = () => {
             {/* Top Pill Tag */}
             <div className="inline-flex items-center gap-2 bg-white border border-[#0d0e11]/10 px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold text-[#0d0e11] mb-6 shadow-sm">
               <span className="w-2 h-2 rounded-full bg-[#58e78f] animate-pulse"></span>
-              <span>Robinhood Chain L2 Ecosystem</span>
+              <span>Solana High-Performance Ecosystem</span>
               <span className="text-[#0d0e11]/30">|</span>
-              <span className="text-[#f243ac]">Zero Gas AI</span>
+              <span className="text-[#f243ac]">Sub-Cent Gas AI</span>
             </div>
 
             <h1 className="font-display font-medium text-[42px] sm:text-[58px] lg:text-[72px] leading-[1.05] tracking-tight text-[#0d0e11] mb-6">
@@ -351,7 +351,7 @@ export const FactoHero: React.FC = () => {
             </h1>
 
             <p className="text-[#0d0e11]/70 text-lg sm:text-xl max-w-xl font-sans font-normal leading-relaxed mb-8">
-              Cove APIs and autonomous on-chain agents allow virtual companions to hatch, evolve, and spar on Robinhood EVM Layer-2 — approving every interaction against live balances in real time.
+              Cove APIs and autonomous on-chain agents allow virtual companions to hatch, evolve, and spar on Solana — approving every interaction against live state in real time.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 mb-10">
@@ -378,12 +378,12 @@ export const FactoHero: React.FC = () => {
             <div className="flex flex-wrap items-center gap-6 pt-6 border-t border-[#0d0e11]/10 w-full text-xs font-mono text-[#0d0e11]/60">
               <div className="flex items-center gap-1.5 text-[#0d0e11] font-semibold">
                 <Shield className="w-4 h-4 text-[#58e78f]" />
-                <span>Verified Robinhood EVM L2</span>
+                <span>Verified Solana Network</span>
               </div>
               <span>•</span>
-              <div>Sub-second finality</div>
+              <div>400ms finality</div>
               <span>•</span>
-              <div className="text-[#f243ac] font-semibold">Sponsored Zero Gas</div>
+              <div className="text-[#f243ac] font-semibold">Sub-Cent Fast Txns</div>
             </div>
           </div>
 
@@ -422,7 +422,7 @@ export const FactoHero: React.FC = () => {
                       🥚
                     </div>
                     <h3 className="font-display font-bold text-lg text-white">Mystic Genesis Egg</h3>
-                    <p className="text-xs text-white/50 font-mono mt-0.5">Ready to hatch on Robinhood Chain</p>
+                    <p className="text-xs text-white/50 font-mono mt-0.5">Ready to hatch on Solana</p>
                     <button
                       onClick={handleHatch}
                       disabled={hatchLoading}
@@ -561,25 +561,23 @@ export const FactoHero: React.FC = () => {
           </p>
           <div className="overflow-hidden w-full">
             <div className="facto-marquee-track flex items-center gap-12 text-[#0d0e11]/60 font-display font-semibold text-sm">
-              <span className="hover:text-[#0d0e11] transition">Robinhood Chain L2</span>
+              <span className="hover:text-[#0d0e11] transition">Solana Network</span>
               <span className="text-[#0d0e11]/20">/</span>
-              <span className="hover:text-[#0d0e11] transition">Ethereum EVM</span>
+              <span className="hover:text-[#0d0e11] transition">Metaplex Core</span>
               <span className="text-[#0d0e11]/20">/</span>
-              <span className="hover:text-[#0d0e11] transition">Arbitrum Orbit</span>
+              <span className="hover:text-[#0d0e11] transition">Anchor Framework</span>
               <span className="text-[#0d0e11]/20">/</span>
-              <span className="hover:text-[#0d0e11] transition">OpenEden Yield</span>
+              <span className="hover:text-[#0d0e11] transition">Phantom &amp; Solflare</span>
               <span className="text-[#0d0e11]/20">/</span>
-              <span className="hover:text-[#0d0e11] transition">Solayer Network</span>
+              <span className="hover:text-[#0d0e11] transition">Pyth Oracle</span>
               <span className="text-[#0d0e11]/20">/</span>
-              <span className="hover:text-[#0d0e11] transition">Morpho Blue</span>
+              <span className="hover:text-[#0d0e11] transition">Jupiter Exchange</span>
               <span className="text-[#0d0e11]/20">/</span>
-              <span className="hover:text-[#0d0e11] transition">Monad EVM</span>
+              <span className="hover:text-[#0d0e11] transition">Solana Network</span>
               <span className="text-[#0d0e11]/20">/</span>
-              <span className="hover:text-[#0d0e11] transition">Robinhood Chain L2</span>
+              <span className="hover:text-[#0d0e11] transition">Metaplex Core</span>
               <span className="text-[#0d0e11]/20">/</span>
-              <span className="hover:text-[#0d0e11] transition">Ethereum EVM</span>
-              <span className="text-[#0d0e11]/20">/</span>
-              <span className="hover:text-[#0d0e11] transition">Arbitrum Orbit</span>
+              <span className="hover:text-[#0d0e11] transition">Anchor Framework</span>
             </div>
           </div>
         </div>

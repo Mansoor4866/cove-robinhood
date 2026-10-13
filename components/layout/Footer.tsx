@@ -23,11 +23,11 @@ export const Footer: React.FC = () => {
               />
             </div>
             <p className="text-sm text-[#0d0e11]/60 font-sans max-w-sm leading-relaxed mb-4">
-              Autonomous AI companion protocol on Robinhood Chain L2. Hatch, train, and spar with sovereign on-chain creatures in natural language.
+              Autonomous AI companion protocol on Solana. Hatch, train, and spar with sovereign on-chain creatures in natural language.
             </p>
             <div className="flex items-center gap-2 text-xs font-mono text-[#0d0e11]/50">
               <span className="w-2 h-2 rounded-full bg-[#58e78f]"></span>
-              <span>All Sequencers Operational</span>
+              <span>Solana Cluster Operational</span>
             </div>
           </div>
 
@@ -76,7 +76,15 @@ export const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <span className="text-[#0d0e11]/40">Robinhood L2 Explorer</span>
+                <a
+                  href="https://explorer.solana.com/?cluster=devnet"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#0d0e11] transition flex items-center gap-1"
+                >
+                  <span>Solana Explorer</span>
+                  <ArrowUpRight className="w-3 h-3 text-[#0d0e11]/40" />
+                </a>
               </li>
               <li>
                 <span className="text-[#0d0e11]/40">Sherwood Guilds</span>
@@ -94,16 +102,16 @@ export const Footer: React.FC = () => {
             </h4>
             <div className="bg-white border border-[#0d0e11]/10 p-3.5 rounded-xl font-mono text-xs space-y-1.5 shadow-sm">
               <div className="flex justify-between text-[#0d0e11]/60">
-                <span>Chain ID:</span>
-                <span className="font-bold text-[#0d0e11]">EVM 42161</span>
+                <span>Cluster:</span>
+                <span className="font-bold text-[#0d0e11]">Solana</span>
               </div>
               <div className="flex justify-between text-[#0d0e11]/60">
                 <span>Avg Block:</span>
-                <span className="font-bold text-[#58e78f]">0.25s</span>
+                <span className="font-bold text-[#58e78f]">400ms</span>
               </div>
               <div className="flex justify-between text-[#0d0e11]/60">
                 <span>Gas Fee:</span>
-                <span className="font-bold text-[#f243ac]">$0.00</span>
+                <span className="font-bold text-[#f243ac]">&lt; $0.001</span>
               </div>
             </div>
           </div>
@@ -118,7 +126,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Credits */}
         <div className="pt-6 border-t border-[#0d0e11]/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#0d0e11]/50">
-          <p>© 2026 Cove Protocol. Built on Robinhood EVM Layer-2.</p>
+          <p>© 2026 Cove Protocol. Built on Solana.</p>
           <div className="flex items-center gap-6">
             <span className="hover:text-[#0d0e11] cursor-pointer">Privacy</span>
             <span className="hover:text-[#0d0e11] cursor-pointer">Terms</span>

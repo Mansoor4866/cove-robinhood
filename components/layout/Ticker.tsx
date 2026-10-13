@@ -3,8 +3,8 @@ import React from "react";
 export const Ticker: React.FC = () => {
   const tickerItems = [
     { label: "COVE SANCTUARY", value: "ONLINE", isHighlight: true },
-    { label: "ROBINHOOD CHAIN", value: "EVM L2 ACTIVE" },
-    { label: "GENESIS MINT", value: "FREE / ZERO GAS", isHighlight: true },
+    { label: "SOLANA NETWORK", value: "MAINNET / DEVNET ACTIVE" },
+    { label: "GENESIS MINT", value: "FREE / SUB-CENT", isHighlight: true },
     { label: "AI EXPEDITIONS", value: "SHERWOOD DEEP FOREST" },
     { label: "FEED COOLDOWN", value: "READY" },
     { label: "SOULBOUND EVOLUTION", value: "ACTIVE" },

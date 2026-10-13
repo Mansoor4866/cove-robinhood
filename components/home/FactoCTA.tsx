@@ -17,16 +17,16 @@ export const FactoCTA: React.FC = () => {
 
           <div className="inline-flex items-center gap-2 bg-white/10 px-3.5 py-1.5 rounded-full text-xs font-mono text-[#58e78f] mb-6 font-semibold">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Robinhood EVM Layer-2 Live Genesis</span>
+            <span>Solana High TPS Live Genesis</span>
           </div>
 
           <h2 className="font-display font-medium text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight max-w-3xl leading-[1.08] mb-6">
             Ready to bring your companion <br />
-            to life on Robinhood Chain?
+            to life on Solana?
           </h2>
 
           <p className="text-white/70 text-base sm:text-lg max-w-xl font-sans leading-relaxed mb-10">
-            Join thousands of rangers in Sherwood Forest. Hatch and evolve your autonomous pixel companion on Robinhood Chain with zero gas fees.
+            Join thousands of rangers in Sherwood Forest. Hatch and evolve your autonomous pixel companion on Solana with sub-cent transaction fees.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4">

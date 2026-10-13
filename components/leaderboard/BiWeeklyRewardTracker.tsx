@@ -150,7 +150,7 @@ export const BiWeeklyRewardTracker: React.FC<BiWeeklyRewardTrackerProps> = () =>
               <h4 className="font-display font-bold text-white text-base">Early Explorer</h4>
               <p className="text-[#f243ac] font-mono font-bold text-sm mt-1">10 Food Tokens</p>
               <p className="text-white/50 text-[11px] mt-1 leading-snug">
-                Pioneer Status on Robinhood Chain + Daily bonus booster
+                Pioneer Status on Solana + Daily bonus booster
               </p>
             </div>
           </div>

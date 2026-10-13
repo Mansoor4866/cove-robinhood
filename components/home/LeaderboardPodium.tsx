@@ -75,7 +75,7 @@ export const LeaderboardPodium: React.FC = () => {
           </h2>
         </div>
         <p className="text-[#8E9E94] text-sm md:text-base max-w-md font-sans leading-relaxed">
-          The top 3 companions at each 7-day epoch epoch receive on-chain token bounties directly to their Robinhood Wallet.
+          The top 3 companions at each 7-day epoch receive on-chain token bounties directly to their Solana Wallet.
         </p>
       </div>
 

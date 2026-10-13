@@ -1,18 +1,27 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Sparkles, Wallet, Check, ArrowRight, ShieldCheck, RefreshCw } from "lucide-react";
+import {
+  X,
+  Wallet,
+  Check,
+  ArrowRight,
+  ShieldCheck,
+  RefreshCw,
+  Sparkles,
+} from "lucide-react";
+import { authenticateWithWallet, formatAddress } from "@/lib/web3";
 
 interface ConnectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConnected?: (data: { handle: string; address: string }) => void;
+  onSuccess?: (handle: string, wallet: string) => void;
 }
 
 export const ConnectModal: React.FC<ConnectModalProps> = ({
   isOpen,
   onClose,
-  onConnected,
+  onSuccess,
 }) => {
   const [activeTab, setActiveTab] = useState<"x" | "wallet">("x");
   const [twitterHandle, setTwitterHandle] = useState("");
@@ -20,13 +29,17 @@ export const ConnectModal: React.FC<ConnectModalProps> = ({
   const [isConnecting, setIsConnecting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Check if already connected from localStorage
   useEffect(() => {
-    const savedHandle = localStorage.getItem("cove_user_handle");
-    const savedAddress = localStorage.getItem("cove_wallet_address");
-    if (savedHandle) setTwitterHandle(savedHandle);
-    if (savedAddress) setWalletAddress(savedAddress);
-  }, []);
+    if (typeof window !== "undefined") {
+      const savedHandle = localStorage.getItem("cove_twitter_handle") || "";
+      const savedWallet = localStorage.getItem("cove_wallet_address") || "";
+      setTwitterHandle(savedHandle);
+      setWalletAddress(savedWallet);
+      if (savedHandle && savedWallet) {
+        setIsSuccess(true);
+      }
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -34,69 +47,75 @@ export const ConnectModal: React.FC<ConnectModalProps> = ({
     e.preventDefault();
     if (!twitterHandle.trim()) return;
 
-    const formatted = twitterHandle.startsWith("@") ? twitterHandle : `@${twitterHandle}`;
     setIsConnecting(true);
-
     setTimeout(() => {
+      const cleanHandle = twitterHandle.replace(/^@/, "").trim();
+      localStorage.setItem("cove_twitter_handle", cleanHandle);
       setIsConnecting(false);
-      localStorage.setItem("cove_user_handle", formatted);
-      setTwitterHandle(formatted);
-      // If wallet not connected yet, switch tab to wallet
-      if (!walletAddress) {
-        setActiveTab("wallet");
-      } else {
+
+      if (walletAddress) {
         setIsSuccess(true);
-        if (onConnected) onConnected({ handle: formatted, address: walletAddress });
+        if (onSuccess) onSuccess(cleanHandle, walletAddress);
+      } else {
+        setActiveTab("wallet");
       }
-    }, 800);
+    }, 600);
   };
 
-  const handleConnectWallet = (walletType: string) => {
+  const handleConnectWallet = async (walletId: string) => {
     setIsConnecting(true);
-    setTimeout(() => {
-      // Generate simulated EVM Robinhood address or fetch from window.ethereum
-      const randomAddress = `0x${Math.random().toString(16).substring(2, 6)}...${Math.random().toString(16).substring(2, 6)}`;
-      setWalletAddress(randomAddress);
-      localStorage.setItem("cove_wallet_address", randomAddress);
+    try {
+      const session = await authenticateWithWallet(walletId);
+      setWalletAddress(session.address);
+
+      if (twitterHandle) {
+        setIsSuccess(true);
+        if (onSuccess) onSuccess(twitterHandle, session.address);
+      } else {
+        setActiveTab("x");
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to connect Solana wallet");
+    } finally {
       setIsConnecting(false);
-      setIsSuccess(true);
-
-      const handle = twitterHandle || "@sherwood_hero";
-      if (!twitterHandle) {
-        setTwitterHandle(handle);
-        localStorage.setItem("cove_user_handle", handle);
-      }
-
-      if (onConnected) {
-        onConnected({ handle, address: randomAddress });
-      }
-    }, 1000);
+    }
   };
 
   const handleDisconnect = () => {
-    localStorage.removeItem("cove_user_handle");
+    localStorage.removeItem("cove_twitter_handle");
     localStorage.removeItem("cove_wallet_address");
+    localStorage.removeItem("cove_wallet_signature");
+    localStorage.removeItem("cove_wallet_name");
+    localStorage.removeItem("cove_wallet_time");
     setTwitterHandle("");
     setWalletAddress("");
     setIsSuccess(false);
+    setActiveTab("x");
+    window.dispatchEvent(new Event("storage"));
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white border border-black/10 rounded-3xl max-w-md w-full p-6 shadow-2xl relative overflow-hidden">
-        {/* Top Header */}
+      <div className="bg-white border border-black/10 rounded-3xl w-full max-w-[420px] p-6 shadow-2xl relative overflow-hidden text-black font-sans">
+        {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-black/5">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#0E1402] flex items-center justify-center text-[#CCFF00] font-bold text-xs">
-              🏹
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-[#CCFF00] p-1 flex items-center justify-center text-black font-bold">
+              ⚡
             </div>
-            <h3 className="font-display font-bold text-lg text-black">
-              Connect to Sherwood
-            </h3>
+            <div>
+              <h3 className="font-display font-bold text-base text-black leading-none">
+                {isSuccess ? "Identity Linked" : "Connect Identity"}
+              </h3>
+              <p className="font-mono text-[10px] text-black/50 mt-1">
+                Solana Network · Non-Custodial
+              </p>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full text-black/40 hover:text-black hover:bg-black/5 transition"
+            className="p-1 rounded-full text-black/40 hover:text-black hover:bg-black/5 transition"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -107,7 +126,7 @@ export const ConnectModal: React.FC<ConnectModalProps> = ({
         {!isSuccess ? (
           <div className="py-5 space-y-5">
             <p className="text-xs text-black/60 leading-relaxed">
-              Link your 𝕏 account to raise your AI companion in public, and connect your Robinhood Wallet for on-chain NFT ownership.
+              Link your 𝕏 account to raise your AI companion in public, and connect your Solana Wallet for sovereign on-chain ownership.
             </p>
 
             {/* Navigation Tabs */}
@@ -132,7 +151,7 @@ export const ConnectModal: React.FC<ConnectModalProps> = ({
                 }`}
               >
                 <Wallet className="w-3.5 h-3.5" />
-                <span>Robinhood Wallet</span>
+                <span>Solana Wallet</span>
                 {walletAddress && <Check className="w-3 h-3 text-[#CCFF00]" />}
               </button>
             </div>
@@ -173,24 +192,24 @@ export const ConnectModal: React.FC<ConnectModalProps> = ({
               </form>
             )}
 
-            {/* Tab 2: Connect Wallet (Robinhood Chain EVM) */}
+            {/* Tab 2: Connect Wallet (Solana) */}
             {activeTab === "wallet" && (
               <div className="space-y-2.5">
                 <button
-                  onClick={() => handleConnectWallet("Robinhood Wallet")}
+                  onClick={() => handleConnectWallet("phantom")}
                   disabled={isConnecting}
                   className="w-full p-3 rounded-xl border border-black/10 bg-white hover:bg-emerald-50/50 hover:border-[#4C6B00]/40 transition flex items-center justify-between group shadow-sm"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-xl p-1.5 rounded-lg bg-[#FAFAF7] border border-black/5">
-                      🏹
+                      👻
                     </span>
                     <div className="text-left">
                       <div className="font-semibold text-xs text-black group-hover:text-[#4C6B00]">
-                        Robinhood Wallet
+                        Phantom
                       </div>
                       <div className="font-mono text-[10px] text-black/40">
-                        Robinhood Chain Native
+                        Solana Native & Multi-Chain
                       </div>
                     </div>
                   </div>
@@ -200,20 +219,20 @@ export const ConnectModal: React.FC<ConnectModalProps> = ({
                 </button>
 
                 <button
-                  onClick={() => handleConnectWallet("MetaMask")}
+                  onClick={() => handleConnectWallet("solflare")}
                   disabled={isConnecting}
                   className="w-full p-3 rounded-xl border border-black/10 bg-white hover:bg-emerald-50/50 hover:border-[#4C6B00]/40 transition flex items-center justify-between group shadow-sm"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-xl p-1.5 rounded-lg bg-[#FAFAF7] border border-black/5">
-                      🦊
+                      ☀️
                     </span>
                     <div className="text-left">
                       <div className="font-semibold text-xs text-black group-hover:text-[#4C6B00]">
-                        MetaMask
+                        Solflare
                       </div>
                       <div className="font-mono text-[10px] text-black/40">
-                        EVM Browser Extension
+                        Native Solana Web3 Extension
                       </div>
                     </div>
                   </div>
@@ -221,20 +240,20 @@ export const ConnectModal: React.FC<ConnectModalProps> = ({
                 </button>
 
                 <button
-                  onClick={() => handleConnectWallet("WalletConnect")}
+                  onClick={() => handleConnectWallet("backpack")}
                   disabled={isConnecting}
                   className="w-full p-3 rounded-xl border border-black/10 bg-white hover:bg-emerald-50/50 hover:border-[#4C6B00]/40 transition flex items-center justify-between group shadow-sm"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-xl p-1.5 rounded-lg bg-[#FAFAF7] border border-black/5">
-                      🔗
+                      🎒
                     </span>
                     <div className="text-left">
                       <div className="font-semibold text-xs text-black group-hover:text-[#4C6B00]">
-                        WalletConnect
+                        Backpack
                       </div>
                       <div className="font-mono text-[10px] text-black/40">
-                        Mobile QR Code Scan
+                        xNFT & Solana High Performance
                       </div>
                     </div>
                   </div>
@@ -254,7 +273,7 @@ export const ConnectModal: React.FC<ConnectModalProps> = ({
                 Account Successfully Linked!
               </h4>
               <p className="text-[11px] text-black/60 mt-1">
-                Your 𝕏 identity is now mapped to Robinhood Chain.
+                Your 𝕏 identity is now mapped to Solana.
               </p>
             </div>
 
@@ -264,13 +283,13 @@ export const ConnectModal: React.FC<ConnectModalProps> = ({
                 <span className="font-bold text-[#4C6B00]">{twitterHandle}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-black/50">Wallet:</span>
-                <span className="font-bold text-black">{walletAddress}</span>
+                <span className="text-black/50">Solana Address:</span>
+                <span className="font-bold text-black">{formatAddress(walletAddress)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-black/50">Network:</span>
                 <span className="font-bold text-black flex items-center gap-1">
-                  <span className="live-dot"></span> Robinhood Chain
+                  <span className="live-dot"></span> Solana Devnet / Mainnet
                 </span>
               </div>
             </div>
@@ -299,7 +318,7 @@ export const ConnectModal: React.FC<ConnectModalProps> = ({
           <span className="flex items-center gap-1">
             <ShieldCheck className="w-3 h-3 text-[#4C6B00]" /> Non-custodial Web3
           </span>
-          <span>Robinhood EVM v1.0</span>
+          <span>Solana High TPS v1.0</span>
         </div>
       </div>
     </div>

@@ -12,7 +12,7 @@ export const CompanionRoster: React.FC = () => {
           Sherwood Forest Companions
         </h2>
         <p className="text-[#0d0e11]/70 text-sm mt-2 leading-relaxed font-sans">
-          Sherwood Forest is home to 12 unique legendary companions, divided into specialized tactical factions. Each has their own custom role and vital duties on Robinhood Chain.
+          Sherwood Forest is home to 12 unique legendary companions, divided into specialized tactical factions. Each has their own custom role and vital duties on Solana.
         </p>
       </div>
 

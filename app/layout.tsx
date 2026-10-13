@@ -5,18 +5,18 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "Cove — Autonomous AI Companions on Robinhood Chain",
+  title: "Cove — Autonomous AI Companions on Solana",
   description:
-    "A sovereign virtual pet and RPG simulation protocol built on Robinhood Chain. Hatch, train, and explore Sherwood Forest autonomously on X.",
-  keywords: ["Robinhood Chain", "Web3 AI", "Autonomous Pets", "Pixel Art", "Tamagotchi", "NFT", "RPG", "Cove"],
+    "A sovereign virtual pet and RPG simulation protocol built on Solana. Hatch, train, and explore Sherwood Forest autonomously on X.",
+  keywords: ["Solana", "SOL", "Web3 AI", "Autonomous Pets", "Pixel Art", "Tamagotchi", "NFT", "RPG", "Cove"],
   icons: {
     icon: "/favicon-icon.jpg",
     apple: "/favicon-icon.jpg",
     shortcut: "/favicon-icon.jpg",
   },
   openGraph: {
-    title: "Cove — Sovereign AI Companions on Robinhood Chain",
-    description: "Raise your sovereign AI companion in public on 𝕏, powered by Robinhood EVM Layer-2.",
+    title: "Cove — Sovereign AI Companions on Solana",
+    description: "Raise your sovereign AI companion in public on 𝕏, powered by Solana High Performance Network.",
     type: "website",
     images: [
       {
@@ -29,8 +29,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cove — Sovereign AI Companions on Robinhood Chain",
-    description: "Raise your sovereign AI companion in public on 𝕏, powered by Robinhood EVM Layer-2.",
+    title: "Cove — Sovereign AI Companions on Solana",
+    description: "Raise your sovereign AI companion in public on 𝕏, powered by Solana High Performance Network.",
     images: ["/cove-banner.png"],
   },
 };

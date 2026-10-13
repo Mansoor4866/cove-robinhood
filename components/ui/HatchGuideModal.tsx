@@ -62,13 +62,11 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
 
   const handleConnectWallet = async (walletType: string) => {
     setIsConnecting(true);
-    const walletId = walletType.toLowerCase().includes("robinhood")
-      ? "robinhood"
-      : walletType.toLowerCase().includes("phantom")
-      ? "phantom"
-      : walletType.toLowerCase().includes("meta")
-      ? "metamask"
-      : "walletconnect";
+    const walletId = walletType.toLowerCase().includes("solflare")
+      ? "solflare"
+      : walletType.toLowerCase().includes("backpack")
+      ? "backpack"
+      : "phantom";
 
     try {
       const session = await authenticateWithWallet(walletId);
@@ -107,7 +105,7 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
                 Welcome to Cove! 👋
               </h3>
               <p className="text-white/60 text-sm max-w-xs mx-auto leading-relaxed">
-                Ready to hatch your sovereign AI companion on Robinhood Chain?<br />
+                Ready to hatch your sovereign AI companion on Solana?<br />
                 Take a quick tour and start your journey.
               </p>
             </div>
@@ -116,13 +114,13 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
           {/* Step 1: Connect Wallet */}
           {currentStep === 1 && (
             <div className="space-y-3 animate-fade-in">
-              <div className="text-5xl select-none mb-2 drop-shadow-[0_0_15px_#00FF87]">🏹</div>
+              <div className="text-5xl select-none mb-2 drop-shadow-[0_0_15px_#00FF87]">⚡</div>
               <h3 className="font-display font-extrabold text-2xl text-white">
-                Step 1: Connect Your Wallet
+                Step 1: Connect Solana Wallet
               </h3>
               <p className="text-white/60 text-sm max-w-xs mx-auto leading-relaxed">
-                Connect your Robinhood, Phantom, or MetaMask EVM wallet. Transactions are{" "}
-                <span className="font-bold text-[#00FF87]">zero-gas</span> and settled instantly on Robinhood Layer-2.
+                Connect your Phantom, Solflare, or Backpack wallet. Transactions are{" "}
+                <span className="font-bold text-[#00FF87]">sub-cent</span> and settled in 400ms on Solana.
               </p>
             </div>
           )}
@@ -165,7 +163,7 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
               </h3>
               <p className="text-white/60 text-xs max-w-xs mx-auto leading-relaxed">
                 Level up your companion on the Sherwood Leaderboard to qualify for the{" "}
-                <span className="font-bold text-[#00FF87]">$COVE Token Airdrop</span> & Whitelist tiers!
+                <span className="font-bold text-[#00FF87]">$COVE Token Airdrop on Solana</span> & Whitelist tiers!
               </p>
               <div className="font-mono text-[11px] text-[#00FF87] font-bold">
                 Snapshot Countdown: {timeLeft}
@@ -185,7 +183,7 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
                       className="w-full btn-neon py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 font-mono text-xs font-bold shadow-md"
                     >
                       <Wallet className="w-4 h-4" />
-                      <span>Connect Wallet Now</span>
+                      <span>Connect Solana Wallet</span>
                     </button>
                   )}
                 </div>
@@ -194,15 +192,6 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
               {/* Mode: Wallet Select Modal */}
               {activeConnectMode === "wallet_select" && (
                 <div className="space-y-2 max-w-xs mx-auto w-full pt-1 font-mono text-xs">
-                  <button
-                    onClick={() => handleConnectWallet("Robinhood Wallet")}
-                    disabled={isConnecting}
-                    className="w-full py-2.5 px-3.5 rounded-xl border border-white/10 bg-[#050B07] hover:border-[#00FF87]/40 text-left flex items-center justify-between text-white transition"
-                  >
-                    <span>🏹 Robinhood Wallet</span>
-                    <span className="text-[10px] text-[#00FF87] font-bold">Connect</span>
-                  </button>
-
                   <button
                     onClick={() => handleConnectWallet("Phantom")}
                     disabled={isConnecting}
@@ -213,11 +202,20 @@ export const HatchGuideModal: React.FC<HatchGuideModalProps> = ({
                   </button>
 
                   <button
-                    onClick={() => handleConnectWallet("MetaMask")}
+                    onClick={() => handleConnectWallet("Solflare")}
                     disabled={isConnecting}
                     className="w-full py-2.5 px-3.5 rounded-xl border border-white/10 bg-[#050B07] hover:border-[#00FF87]/40 text-left flex items-center justify-between text-white transition"
                   >
-                    <span>🦊 MetaMask</span>
+                    <span>☀️ Solflare</span>
+                    <span className="text-[10px] text-[#00FF87] font-bold">Connect</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleConnectWallet("Backpack")}
+                    disabled={isConnecting}
+                    className="w-full py-2.5 px-3.5 rounded-xl border border-white/10 bg-[#050B07] hover:border-[#00FF87]/40 text-left flex items-center justify-between text-white transition"
+                  >
+                    <span>🎒 Backpack</span>
                     <span className="text-[10px] text-[#00FF87] font-bold">Connect</span>
                   </button>
 

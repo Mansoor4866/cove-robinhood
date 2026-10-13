@@ -13,9 +13,9 @@ export const FeatureDesk: React.FC = () => {
     },
     {
       num: "02",
-      title: "Robinhood L2 Finality",
-      tag: "Instant & Zero Gas",
-      desc: "Built directly on the Robinhood EVM Layer-2. Companion state changes, egg cracking, and stat boosts execute with sub-millisecond finality.",
+      title: "Solana High-TPS Finality",
+      tag: "Instant & Sub-Cent",
+      desc: "Built directly on Solana. Companion state changes, egg cracking, and stat boosts execute with 400ms sub-second finality.",
       icon: <Cpu className="w-5 h-5 text-emerald-400" />,
       accent: "from-emerald-500/20 to-transparent",
     },
@@ -47,7 +47,7 @@ export const FeatureDesk: React.FC = () => {
       num: "06",
       title: "Soulbound Sovereignty",
       tag: "100% Non-Custodial",
-      desc: "Your companion lives in your self-custody Robinhood Wallet or MetaMask. You own the cryptographic seed and all historical logs forever.",
+      desc: "Your companion lives in your self-custody Phantom, Solflare, or Backpack wallet. You own the cryptographic seed and all historical logs forever.",
       icon: <Key className="w-5 h-5 text-emerald-400" />,
       accent: "from-emerald-500/20 to-transparent",
     },
@@ -68,7 +68,7 @@ export const FeatureDesk: React.FC = () => {
           </h2>
         </div>
         <p className="text-[#8E9E94] text-sm md:text-base max-w-md font-sans leading-relaxed">
-          Six foundational technological pillars that power the living Sherwood ecosystem on Robinhood Chain.
+          Six foundational technological pillars that power the living Sherwood ecosystem on Solana.
         </p>
       </div>
 

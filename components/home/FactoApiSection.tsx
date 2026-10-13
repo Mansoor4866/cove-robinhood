@@ -9,13 +9,13 @@ export const FactoApiSection: React.FC = () => {
   const [responseLog, setResponseLog] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(false);
 
-  const sampleSnippet = `// 1. Initialize Cove SDK on Robinhood Chain L2
-import { CoveProtocol } from "@cove/sdk";
+  const sampleSnippet = `// 1. Initialize Cove SDK on Solana
+import { CoveProtocol } from "@cove/solana-sdk";
 
 const cove = new CoveProtocol({
-  network: "robinhood-l2",
-  rpc: "https://rpc.robinhood-chain.internal",
-  gasless: true
+  cluster: "mainnet-beta", // or "devnet"
+  rpc: "https://api.mainnet-beta.solana.com",
+  commitment: "confirmed"
 });
 
 // 2. Fetch or evolve companion state
@@ -39,9 +39,9 @@ console.log(companion.level, companion.mana);`;
         companion: "Robin Fox #001",
         level: 4,
         mana: "95/100",
-        blockNumber: 19482103,
-        network: "Robinhood EVM Layer-2",
-        zeroGasVerified: true
+        slot: 289410423,
+        cluster: "Solana Mainnet",
+        subCentVerified: true
       }, null, 2));
       sounds.playHatchFanfare();
     }, 600);

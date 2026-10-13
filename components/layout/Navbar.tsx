@@ -94,7 +94,7 @@ export const Navbar: React.FC = () => {
               priority
             />
             <span className="hidden sm:inline-block font-mono text-[10px] uppercase tracking-wider bg-[#0d0e11]/5 px-2 py-0.5 rounded text-[#0d0e11]/60 font-semibold">
-              Robinhood L2
+              Solana
             </span>
           </Link>
 

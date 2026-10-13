@@ -41,7 +41,7 @@ export const TerminalLog: React.FC = () => {
     } else if (cmd.includes("status")) {
       responseText = "📊 Status: Robin Fox (Level 1 Ranger) · Health 100/100 · Happiness 100% · Status: READY";
     } else {
-      responseText = `⚡ Command '${cmd}' verified on Robinhood EVM block #849129.`;
+      responseText = `⚡ Command '${cmd}' verified on Solana slot #289410423.`;
     }
 
     setLogs((prev) => [
@@ -81,7 +81,7 @@ export const TerminalLog: React.FC = () => {
           </div>
           <div className="text-[#00FF87] text-[10px] flex items-center gap-1.5 font-bold">
             <span className="beacon-dot"></span>
-            <span>ROBINHOOD EVM L2 STREAM</span>
+            <span>SOLANA HIGH TPS STREAM</span>
           </div>
         </div>
 

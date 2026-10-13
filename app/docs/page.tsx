@@ -29,7 +29,7 @@ export default function DocsPage() {
           Cove Protocol Documentation
         </h1>
         <p className="text-[#0d0e11]/70 text-lg max-w-2xl mt-3 font-sans">
-          Comprehensive guide to hatching, training, and exploring Sherwood with sovereign AI pixel companions on Robinhood Chain.
+          Comprehensive guide to hatching, training, and exploring Sherwood with sovereign AI pixel companions on Solana.
         </p>
       </div>
 
